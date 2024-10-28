@@ -171,7 +171,7 @@ accessibleAutocomplete({
    minLength: 1,
    confirmOnBlur: true,
    showAllValues: true,
-   placeholder: "Search or select an attribute from a list"
+   placeholder: "Search for or select a location from a list"
 })
 
 const results = document.getElementsByClassName("autocomplete__option")
@@ -226,21 +226,21 @@ console.log(results)
    console.log(selectedList);
 });
 
-   function showDiv(div1) {
-      console.log(div1)
-      document.getElementById(div1).style.display = 'block';
+//   function showDiv(div1) {
+//      console.log(div1)
+//      document.getElementById(div1).style.display = 'block';
+//
+//   }
+//
+//   function hideDiv(div1) {
+//      console.log(div1)
+//      document.getElementById(div1).style.display = 'none';
+//
+//   }
 
-   }
-
-   function hideDiv(div1) {
-      console.log(div1)
-      document.getElementById(div1).style.display = 'none';
-
-   }
-
-   let stageList = ['Invitation', 'First reminder', 'Second reminder', 'Third reminder'];
-   //  const exp = document.getElementById("exp");
-    var count = 1;
+//   let stageList = ['Invitation', 'First reminder', 'Second reminder', 'Third reminder'];
+//   //  const exp = document.getElementById("exp");
+//    var count = 1;
 
    function addAnotherHandler(id) {
        count = count + 1;
@@ -258,75 +258,75 @@ console.log(results)
   
 
 
-    function valueMatching(selection) {
-       count = count + 1;
-      //  const add1 = document.getElementById(id);
-   //  console.log(count=count+1)
-   //    //  console.log(add1.innerText)
-   //    //  add1.style.cssText = "display:none";
-       var wrapper = document.createElement("div");
-       wrapper.id = "wrapperDiv" + count;
-
-
-
-      switch (selection) {
-         case "ICB ODS Code - ICB":
-         console.log("ICB ODS Code - ICB"+" "+selection)
-         // wrapper.innerHTML = '<div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="my-autocomplete">ICB list</label><div style=";" id="my-autocomplete-container"></div></div>';
-            // exp.appendChild(wrapper)
-         break;
-
-         case "Language Preference Flag - LANGUAGE_PREFERENCE":
-         console.log("Language Preference Flag - LANGUAGE_PREFERENCE")
-         break;
-
-         case "Last Invite Type (I or R) - LAST_INVITE_TYPE":
-         console.log("Last Invite Type (I or R) - LAST_INVITE_TYPE");
-         break;
-
-         case "Last Invite Date - LAST_INVITE_DATE":
-         break;
-
-         case "Commissioning Region - COMISSIONING_REGION":
-         break;
-
-         case "Last Successful Procedure Dose Number - LAST_SUCCESSFUL_DOSE":
-         break;
-         
-         case "Opted Out of Communications - OPTOUT":
-         break;
-
-         case "Days Since Last Procedure (Jab) - DAYS_SINCE_LAST_PROCEDURE":
-         break;
-
-         case "Last Communicaiton Date - LAST_COMMS_DATE":
-         break;
-
-         case "Date of Birth - DATE_OF_BIRTH":
-         break;
-
-         case "Booked Appointment Date - BOOKED_APPOINTMENT_DATE":
-         break;
-            }
-    }
-
-
-
-
-
-
-    function addIntervalHandler(id) {
-       count = count + 1;
-       const add1 = document.getElementById(id);
-    console.log(count=count+1)
-       console.log(add1.innerText)
-       add1.style.cssText = "display:none";
-       var wrapper = document.createElement("div");
-
-       wrapper.id = "wrapperDiv" + count;
-       wrapper.innerHTML = '<div style="display:inline-block" class="filterLabel nhsuk-form-group"><label class="nhsuk-label" for="stageOptions-' + count + '">Stage ' + count + '</label><select style="display:inline-block" class="nhsuk-select" name="stageOptions-' + count + '"><option class="filterLabel" disabled selected value="Select">Select from the list</option><option id="" value=""></option></select></div><p class="nhsuk-body-m"><a id="addA' + count + '" class="nhsuk-link" style="" onclick="addAnotherHandler(this.id)" href="#">Add another stage</a></p>';
-       exp.appendChild(wrapper)
-    }
+    //function valueMatching(selection) {
+//       count = count + 1;
+//      //  const add1 = document.getElementById(id);
+//   //  console.log(count=count+1)
+//   //    //  console.log(add1.innerText)
+//   //    //  add1.style.cssText = "display:none";
+//       var wrapper = document.createElement("div");
+//       wrapper.id = "wrapperDiv" + count;
+//
+//
+//
+//      switch (selection) {
+//         case "ICB ODS Code - ICB":
+//         console.log("ICB ODS Code - ICB"+" "+selection)
+//         // wrapper.innerHTML = '<div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="my-autocomplete">ICB list</label><div style=";" id="my-autocomplete-container"></div></div>';
+//            // exp.appendChild(wrapper)
+//         break;
+//
+//         case "Language Preference Flag - LANGUAGE_PREFERENCE":
+//         console.log("Language Preference Flag - LANGUAGE_PREFERENCE")
+//         break;
+//
+//         case "Last Invite Type (I or R) - LAST_INVITE_TYPE":
+//         console.log("Last Invite Type (I or R) - LAST_INVITE_TYPE");
+//         break;
+//
+//         case "Last Invite Date - LAST_INVITE_DATE":
+//         break;
+//
+//         case "Commissioning Region - COMISSIONING_REGION":
+//         break;
+//
+//         case "Last Successful Procedure Dose Number - LAST_SUCCESSFUL_DOSE":
+//         break;
+//         
+//         case "Opted Out of Communications - OPTOUT":
+//         break;
+//
+//         case "Days Since Last Procedure (Jab) - DAYS_SINCE_LAST_PROCEDURE":
+//         break;
+//
+//         case "Last Communicaiton Date - LAST_COMMS_DATE":
+//         break;
+//
+//         case "Date of Birth - DATE_OF_BIRTH":
+//         break;
+//
+//         case "Booked Appointment Date - BOOKED_APPOINTMENT_DATE":
+//         break;
+//            }
+//    }
+//
+//
+//
+//
+//
+//
+//    function addIntervalHandler(id) {
+//       count = count + 1;
+//       const add1 = document.getElementById(id);
+//    console.log(count=count+1)
+//       console.log(add1.innerText)
+//       add1.style.cssText = "display:none";
+//       var wrapper = document.createElement("div");
+//
+//       wrapper.id = "wrapperDiv" + count;
+//       wrapper.innerHTML = '<div style="display:inline-block" class="filterLabel nhsuk-form-group"><label class="nhsuk-label" for="stageOptions-' + count + '">Stage ' + count + '</label><select style="display:inline-block" class="nhsuk-select" name="stageOptions-' + count + '"><option class="filterLabel" disabled selected value="Select">Select from the list</option><option id="" value=""></option></select></div><p class="nhsuk-body-m"><a id="addA' + count + '" class="nhsuk-link" style="" onclick="addAnotherHandler(this.id)" href="#">Add another stage</a></p>';
+//       exp.appendChild(wrapper)
+//    }
 
 </script>
 <script>
