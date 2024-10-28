@@ -1,0 +1,458 @@
+{% set pagetitle ="accessibleautocomplete" %}
+{% extends 'layout.html' %}
+
+{% block header %}
+{% endblock %}
+
+
+{% set mainClasses = "nhsuk-main-wrapper--s" %}
+{% block pageTitle %}
+{{ pagetitle }}
+{% endblock %}
+
+{# {% macro completeSkeleton(val1="",val2="") %}
+<div class="nhsuk-u-padding-bottom-3" <label class="nhsuk-label" style="font-size:17px" for="{{val1}}">Attribute search</label><div style=";" id="{{val2}}"></div>
+<svg style="display:inline-block;height:24px;position:absolute;right:8px;top:10px;width:24px;z-index:-1" class="" version='1.1' xmlns='http://www.w3.org/2000/svg' className={className} focusable='false'>
+   <g stroke='none' fill='none' fill-rule='evenodd'>
+     <polygon fill='#000000' points='0 0 22 0 11 17' />
+   </g>
+ </svg>
+
+</div>
+{% endmacro %} #}
+
+{% macro autoCompleteSkeleton(val1="",val2="",label="") %} <div class="nhsuk-u-padding-bottom-3" style=";"><label class="nhsuk-label" style="font-size:17px" for="{{val1}}">{{ label }}</label><div style=";" id="{{val2}}"></div> <svg style="float:right;;margin-right:10px;margin-top:-25px;;z-index:-1" width="14px" height="14px" viewBox="0 0 24 24" class="" version='1.1' xmlns='http://www.w3.org/2000/svg' className={className} focusable='false'>    <g stroke='none' fill='none' fill-rule='evenodd'>      <polygon fill='#425563' points='0 0 22 0 11 17' />    </g>  </svg> </div> {% endmacro %}
+{% macro selectOperator(count=1|int) %} {% set operatorListFull = ['=','!=','<','<=','>','>=','contains','not_contains','starts_with','ends_with','in','not_in','is_null','is_not_null','between','not_between','is_empty','is_not_empty','is_true','is_false'] %} <div style="" class=" nhsuk-form-group">    <label style="font-size:17px" class=" nhsuk-label" for="operator-select{{'-'+count}}">Operator</label>    <select style="" class=" nhsuk-select" id="operator-select{{'-'+count}}"       name="operator-select{{'-'+count}}">       <option disabled selected value="Select">Select from the list</option>       {% for choice in operatorListFull %}       <option id="{{choice | replace(" "," -")|lower+'-'+count}}" value="{{choice}}">{{choice}}</option>       {% endfor %}    </select> </div> {# <ul class="govuk-list">    <li>       List item    </li>    <li>       List item    </li>    <li>       List item    </li> </ul> #} {% endmacro %}
+
+
+
+
+
+{% block content %}
+<style>
+  /* .autocomplete__wrapper{position:relative}.autocomplete__hint,.autocomplete__input{-webkit-appearance:none;appearance:none;border:2px solid #0b0c0c;border-radius:0;box-sizing:border-box;height:2.5rem;line-height:1.25;margin-bottom:0;width:100%}.autocomplete__input{background-color:transparent;position:relative}.autocomplete__hint{color:#505a5f;position:absolute}.autocomplete__input--default{padding:5px}.autocomplete__input--focused{box-shadow:inset 0 0 0 2px;outline:3px solid #fd0;outline-offset:0}.autocomplete__input--show-all-values{cursor:pointer;padding:5px 35px 5px 5px}.autocomplete__dropdown-arrow-down{display:inline-block;height:24px;position:absolute;right:8px;top:10px;width:24px;z-index:-1}.autocomplete__menu{background-color:#fff;border:2px solid #0b0c0c;border-top:0;color:#0b0c0c;margin:0;max-height:342px;overflow-x:hidden;padding:0;min-width:641px;width:100%;width:calc(100% - 4px)}.autocomplete__menu--visible{display:block}.autocomplete__menu--hidden{display:none}.autocomplete__menu--overlay{box-shadow:0 2px 6px rgba(0,0,0,.257);left:0;position:absolute;top:100%;z-index:100}.autocomplete__menu--inline{position:relative}.autocomplete__option{border-bottom:1px solid #b1b4b6;border-left-width:0;border-right-width:0;border-top-width:1px;cursor:pointer;display:block;position:relative}.autocomplete__option>*{pointer-events:none}.autocomplete__option:first-of-type{border-top-width:0}.autocomplete__option:last-of-type{border-bottom-width:0}.autocomplete__option--odd{background-color:#f3f2f1}.autocomplete__option--focused,.autocomplete__option:hover{background-color:#1d70b8;border-color:#1d70b8;color:#fff;outline:none}@media (-ms-high-contrast:active),(forced-colors:active){.autocomplete__menu{border-color:FieldText}.autocomplete__option{background-color:Field;color:FieldText}.autocomplete__option--focused,.autocomplete__option:hover{background-color:Highlight;background-color:SelectedItem;border-color:SelectedItem;color:HighlightText;color:SelectedItemText;forced-color-adjust:none;outline-color:SelectedItemText}}.autocomplete__option--no-results{background-color:#f3f2f1;color:#505a5f;cursor:not-allowed}.autocomplete__hint,.autocomplete__input,.autocomplete__option{font-size:1rem;font-weight:400}.autocomplete__hint,.autocomplete__option{padding:5px}@media (min-width:641px){.autocomplete__hint,.autocomplete__input,.autocomplete__option{font-size:1.1875rem;line-height:1.3157894737}} */
+  .autocomplete__wrapper{position:relative}.autocomplete__hint,.autocomplete__input{-webkit-appearance:none;appearance:none;border:2px solid #0b0c0c;border-radius:0;box-sizing:border-box;height:2.5rem;line-height:1.25;margin-bottom:0;width:100%}.autocomplete__input{background-color:transparent;position:relative}.autocomplete__hint{color:#505a5f;position:absolute}.autocomplete__input--default{padding:5px}.autocomplete__input--focused{box-shadow:inset 0 0 0 2px;outline:3px solid #fd0;outline-offset:0}.autocomplete__input--show-all-values{cursor:pointer;padding:5px 35px 5px 5px}.autocomplete__dropdown-arrow-down{display:inline-block;height:24px;position:absolute;right:8px;top:10px;width:24px;z-index:-1}.autocomplete__menu{background-color:#fff;border:2px solid #0b0c0c;border-top:0;color:#0b0c0c;margin:0;max-height:342px;overflow-x:hidden;padding:0;width:100%;width:calc(100% - 4px)}.autocomplete__menu--visible{display:block}.autocomplete__menu--hidden{display:none}.autocomplete__menu--overlay{box-shadow:0 2px 6px rgba(0,0,0,.257);left:0;position:absolute;top:100%;z-index:100}.autocomplete__menu--inline{position:relative}.autocomplete__option{border-bottom:1px solid #b1b4b6;border-left-width:0;border-right-width:0;border-top-width:1px;cursor:pointer;display:block;position:relative}.autocomplete__option>*{pointer-events:none}.autocomplete__option:first-of-type{border-top-width:0}.autocomplete__option:last-of-type{border-bottom-width:0}.autocomplete__option--odd{background-color:#f3f2f1}.autocomplete__option--focused,.autocomplete__option:hover{background-color:#1d70b8;border-color:#1d70b8;color:#fff;outline:none}@media (-ms-high-contrast:active),(forced-colors:active){.autocomplete__menu{border-color:FieldText}.autocomplete__option{background-color:Field;color:FieldText}.autocomplete__option--focused,.autocomplete__option:hover{background-color:Highlight;background-color:SelectedItem;border-color:SelectedItem;color:HighlightText;color:SelectedItemText;forced-color-adjust:none;outline-color:SelectedItemText}}.autocomplete__option--no-results{background-color:#f3f2f1;color:#505a5f;cursor:not-allowed}.autocomplete__hint,.autocomplete__input,.autocomplete__option{font-size:1rem;font-weight:400}.autocomplete__hint,.autocomplete__option{padding:5px}@media (min-width:641px){.autocomplete__hint,.autocomplete__input,.autocomplete__option{font-size:1.1875rem;line-height:1.3157894737}}
+
+  a {
+     font-size:17px;
+  }
+  .thingy{
+     transform: translateY(-50px);
+  }   
+  
+  
+  .zoom {
+    transition: transform .2s; 
+    margin: 0 auto;
+  }
+  
+  .zoom:hover {
+    transform: translateY(-44px); 
+  }
+  
+  a:visited {
+    color: #005EB8;
+  }
+  
+  a:hover {
+    color: #7c2855;
+  
+  }
+  
+  a:active {
+    color: #0000FF;
+  }
+  
+  
+  /* ul {
+       list-style-type: none;
+       margin: 0;
+       padding: 0;
+       overflow: hidden;
+       display: inline;
+     } */
+  
+
+     .liSelected { display: inline-block; /* float:left; */ §§ margin-right: 0px; margin-left: -20px; height: 1.5rem; border-radius: 3px; font-size: 17px; }
+     
+  </style>
+<form action="#" method="post">
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-l">Accessible autocomplete</h1>
+
+
+
+    <div style=";height:flex">
+      <div class="nhsuk-u-padding-0" style=";">
+
+
+   {# <li class="liSelected">{{autoCompleteSkeleton("val1"="my-autocomplete","val2"="my-autocomplete-container")}}
+</li> #}
+
+<div style="width:50%">
+
+{{autoCompleteSkeleton("val1"="my-autocomplete","val2"="my-autocomplete-container",label="Location  search")}}
+
+ </div>
+
+
+
+
+ 
+ {% set region = ['East of England','London','Midlands','North East and Yorkshire','North West','South East','South West'] %}
+
+ {# <li class="liSelected">
+ <div style="" id ="locationRegion" class="nhsuk-form-group">
+   <label  class="nhsuk-label" for="locationRegion">
+     NHS England Region
+   </label>
+   <select style="" class="nhsuk-select" id="locationRegion" name="locationRegion">
+     <option disabled selected value="Select">NHS England Region list</option>
+
+     {% for entry in region %}
+     <option id="{{entry}}" value="{{entry}}">{{entry}}</option>
+     {% endfor %}
+   </select>
+ </div></li> #}
+
+
+
+
+
+
+
+
+
+
+{% set ICBlist = ['NHS Bath and North East Somerset, Swindon and Wiltshire Integrated Care Board','NHS Bedfordshire, Luton and Milton Keynes Integrated Care Board','NHS Birmingham and Solihull Integrated Care Board','NHS Black Country Integrated Care Board','NHS Bristol, North Somerset and South Gloucestershire Integrated Care Board','NHS Buckinghamshire, Oxfordshire and Berkshire West Integrated Care Board','NHS Cambridgeshire and Peterborough Integrated Care Board','NHS Cheshire and Merseyside Integrated Care,Board','NHS Cornwall and the Isles of Scilly Integrated Care Board','NHS Coventry and Warwickshire Integrated Care Board','NHS Derby and Derbyshire Integrated Care Board','NHS Devon Integrated Care Board','NHS Dorset Integrated Care Board','NHS Frimley Integrated Care Board','NHS Gloucestershire Integrated Care Board','NHS Greater Manchester Integrated Care Board','NHS Hampshire and Isle of Wight Integrated Care Board','NHS Herefordshire and Worcestershire Integrated Care Board','NHS Hertfordshire and West Essex Integrated Care Board','NHS Humber and North Yorkshire Integrated Care Board','NHS Kent and Medway Integrated Care Board','NHS Lancashire and South Cumbria Integrated Care Board','NHS Leicester, Leicestershire and Rutland Integrated Care Board','NHS Lincolnshire Integrated Care Board','NHS Mid and South Essex Integrated Care Board','NHS Norfolk and Waveney Integrated Care Board','NHS North Central London Integrated Care Board','NHS North East and North Cumbria Integrated Care Board','NHS North East London Integrated Care Board','NHS North West London Integrated Care Board','NHS Northamptonshire Integrated Care Board','NHS Nottingham and Nottinghamshire Integrated Care Board','NHS Shropshire, Telford and Wrekin Integrated Care Board','NHS Somerset Integrated Care Board','NHS South East London Integrated Care Board','NHS South West London Integrated Care Board','NHS South Yorkshire Integrated Care Board','NHS Staffordshire and Stoke-on-Trent Integrated Care Board','NHS Suffolk and North East Essex Integrated Care Board','NHS Surrey Heartlands Integrated Care Board','NHS Sussex Integrated Care Board','NHS West Yorkshire Integrated Care Board'] %}
+{# <li class="liSelected"><div style="" id ="locationICB" class="nhsuk-form-group">
+   <label  class="filterLabel nhsuk-label" for="locationICB">
+     Integrated Care Board list (42)
+   </label>
+   <select style="" class="nhsuk-select" id="locationICB" name="locationICB">
+     <option disabled selected value="Select">Select Integrated Care Board from the list</option>
+
+     {% for icb in ICBlist %}
+     <option id="{{icbitem}}" value="{{icb}}">{{icb}}</option>
+     {% endfor %}
+   </select>
+ </div></li> #}
+
+
+
+ <!--<li class="liSelected">
+   <div style="" id ="value-1-suffix" class="nhsuk-form-group">
+     <label class="nhsuk-label" for="value-1-suffix">
+       Value 1
+     </label>
+     <div class="nhsuk-input__wrapper">
+       <input style="" class="nhsuk-input nhsuk-input--width-20" id="value-1-suffix" name="value-1-suffix" type="text">
+       <div id ="suffix1" class="nhsuk-input__suffix" aria-hidden="true">Lorem</div>
+     </div>
+   </div>
+ </li>
+
+ <li class="liSelected">
+   <div style="" id ="value-2-suffix" class="nhsuk-form-group">
+     <label class="nhsuk-label" for="value-2-suffix">
+       Value 2
+     </label>
+     <div class="nhsuk-input__wrapper">
+       <input class="nhsuk-input nhsuk-input--width-20" id="value-2-suffix" name="value-2-suffix" type="text">
+       <div id ="suffix2" class="nhsuk-input__suffix" aria-hidden="true">ipsum</div>
+     </div>
+   </div>
+ </li>
+--></ul>
+     
+   
+    </div>
+    <!--<div  style=";;height:40px;border:0px solid black;border-radius:0px 0px 5px 5px;padding:5px 10px 5px 10px;background-color:#FFFBCE;";" class="govuk-radios govuk-radios--small govuk-radios--inline" data-module="govuk-radios">
+
+      <div  class="govuk-radios__item">
+         <input class="radioGaga govuk-radios__input" id="sort" name="example" type="radio" value="relevance">
+         <label style="font-size:21px;font-weight:999" class="govuk-label govuk-radios__label" for="sort">
+            and
+         </label>
+      </div>
+--><!--      <div style=";;" class="govuk-radios__item">
+   
+         <input  class="govuk-u-margin-left-2 govuk-radios__input " id="sort-2" name="example" type="radio" value="title">
+         <label class="govuk-label govuk-radios__label" for="sort-2">
+            or
+         </label>
+      </div>-->
+      </div</div>
+
+                 
+            </div>
+          </div>
+        
+        </div>
+       
+        </div>
+        </div>
+   
+   
+   {% set routeListArray = [] %}
+   
+   <form action="test1?list=routeListArray" method="post">
+   
+   {% if data['input-autocomplete'].length > 0 %}
+   {% set routeListArray = (routeListArray.push(data['input-autocomplete']),routeListArray) %}
+   {% else %}
+   {% endif %}
+   
+         {# <div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="attribSearch">Attribute search</label><div style=";" id="attribSearch-container"></div></div>
+         <div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="otherSearch">Attribute search</label><div style=";" id="other-container"></div></div>
+         <div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="regionSearch">Attribute search</label><div style=";" id="region-container"></div></div> #}
+   
+   
+         {{ routeListArray }}
+         {# wrapper.innerHTML = '<div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="my-autocomplete">ICB list</label><div style=";" id="my-autocomplete-container"></div></div>'; #}
+   
+   
+         <div id="exp">
+   
+            {# <div class="" id="showOperators" style="">{% set count = "0"|int %}{{selectOperator(count=1)}}</div> #}
+            
+                                    {% set count=count+1|int %}
+                                    </div>
+   
+                                 </div>
+                              </div>
+   
+   
+   {% set row1Num = 1|int %}
+   {% set row2Num = 2|int %}
+   {% set row3Num = 3|int %}
+   {# <div class="nhsuk-u-padding-bottom-6" style="display:none"><label class="nhsuk-label" style="font-size:17px" for="my-autocomplete">ICB list</label><div style=";" id="my-autocomplete-container"></div></div> #}
+   
+   <span style="" id="routeRow"></span>
+
+  </form>
+</div>
+<script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
+
+<script type="text/javascript">
+
+//var plainEng = [ 'COVID-19 - COVID-19',   'COVID-19 + Flu (Co-admin) - COVID_FLU',   'Flu - FLU',   'Mumps, Measles and Rubella - MMR',   'Booked Appointment Date - BOOKED_APPOINTMENT_DATE',   'Booked Appointment Provider - BOOKED_APPOINTMENT_PROVIDER',   'Days Since Last Procedure (Jab) - DAYS_SINCE_LAST_PROCEDURE',   'Last Batch ID sending Comms - LAST_COMMS_BATCH',   'Last Communication Channel(s) - LAST_COMMS_CHANNEL',   'Last Communicaiton Date - LAST_COMMS_DATE',   'Last Communication Status - LAST_COMMS_STATUS',   'Last Communication Type (I or R) - LAST_COMMS_TYPE',   'Last Batch ID eligible for invite - LAST_INVITE_BATCH',   'Last Invite Channel - LAST_INVITE_CHANNEL',   'Last Invite Cohort - LAST_INVITE_COHORT',   'Last Invite Date - LAST_INVITE_DATE',   'Last Invite Status - LAST_INVITE_STATUS',   'Last Invite Type (I or R) - LAST_INVITE_TYPE',   'Last Procedure Code (May be not given) - LAST_PROCEDURE',   'Last Procedure Date (May be not given) - LAST_PROCEDURE_DATE',   'Last Procedure Product SNOMED (AMP) - LAST_SUCCESSFUL_AMP',   'Last Successful Procedure Date - LAST_SUCCESSFUL_DATE',   'Last Successful Procedure Dose Number - LAST_SUCCESSFUL_DOSE',   'Last Successful Procedure Code - LAST_SUCCESSFUL_PROCEDURE',   'Opted Out of Communications - OPTOUT',   'Primary Seriese Complete (Do not use) - PRIMARY_SERIES_COMPLETE',   'Number of successful procedures known - SUCCESSFUL_PROCEDURE_COUNT',   '13Q Flag (DMS) - 13Q_FLAG',   'Audio Format Required - AUDIO_REQD',   'Braille Format Required - BRAILLE_REQD',   'Care Home Flag - CARE_HOME_FLAG',   'Commissioning Region - COMISSIONING_REGION',   'Date of Birth - DATE_OF_BIRTH',   'Detained Estate Flag - DE_FLAG',   'Email Address Available Flag - EMAIL_FLAG',   'Gender - GENDER',   'GP Practice ODS Code - GP_PRACTICE_CODE',   'ICB ODS Code - ICB',   'Language Preference Flag - LANGUAGE_PREFERENCE',   'Learning Difficulty/Reasonable Adjustment - LD_FLAG',   'Mobile Phone Number Available Flag - MOBILE_FLAG',   'PCN ODS Code - PCN',   'Postcode - POSTCODE',   'Landline Available Flag - TELEPHONE_FLAG'];
+
+var plainEng = ["Abberton", "Abbots Langley", "Aberaeron", "Aberchirder", "Abercynon", "Aberdare", "Aberdeen", "Aberfeldy", "Aberford", "Aberfoyle", "Abergavenny", "Abergele", "Abergwynfi", "Abergynolwyn", "Aberkenfig", "Aberlour", "Abersychan", "Abertillery", "Aberystwyth", "Abingdon", "Aboyne", "Accrington", "Acton", "Addington", "Addington", "Addlestone", "Adlingfleet", "Aghalee", "Aintree", "Airdrie", "Akeley", "Albrighton", "Alcester", "Aldeburgh", "Alderholt", "Alderley Edge", "Aldermaston", "Aldershot", "Aldridge", "Alexandria", "Alfold", "Alford", "Alford", "Alfreton", "Alloa", "Alness", "Alnwick", "Alresford", "Alrewas", "Alsager", "Alston", "Altham", "Alton", "Alton", "Altrincham", "Alva", "Alvechurch", "Alveston", "Ambleside", "Amersham", "Amesbury", "Amlwch", "Ammanford", "Ampthill", "Andover", "Angmering", "Anlaby", "Annalong", "Annan", "Annesley", "Anniesland", "Anstey", "Anstey", "Anstruther", "Antrim", "Appleby", "Appleford", "Appleton", "Appley Bridge", "Arbroath", "Ardingly", "Ardmillan", "Ardrossan", "Arlesey", "Arley", "Armadale", "Armagh", "Armitage", "Arnold", "Arrochar", "Arthog", "Arundel", "Ascot", "Ash", "Ash Vale", "Ashbourne", "Ashburton", "Ashby de la Launde", "Ashby de la Zouch", "Ashdon", "Ashen", "Ashfield", "Ashford", "Ashford", "Ashington", "Ashington", "Ashley", "Ashmore", "Ashtead", "Ashton in Makerfield", "Ashton-under-Lyne", "Ashwell", "Askam in Furness", "Askern", "Askham", "Astley", "Aston", "Aston Clinton", "Atherstone", "Atherton", "Attleborough", "Attleborough", "Atworth", "Auchinleck", "Auchterarder", "Auchtermuchty", "Augher", "Aughnacloy", "Aultbea", "Aveley", "Aviemore", "Avoch", "Avonmouth", "Axbridge", "Axminster", "Aycliffe", "Aylesbury", "Aylesford", "Aylsham", "Ayr", "Babraham", "Back", "Bacton", "Bacup", "Bagillt", "Bagshot", "Baildon", "Bainton", "Bakewell", "Bala", "Baldock", "Balerno", "Balham", "Ball", "Ballingry", "Balloch", "Ballybogy", "Ballycastle", "Ballyclare", "Ballymena", "Ballymoney", "Ballynahinch", "Bampton", "Banbridge", "Banbury", "Banchory", "Banff", "Bangor", "Bangor", "Bangor-is-y-coed", "Banham", "Banstead", "Barbaraville", "Bargoed", "Barking", "Barkway", "Barley", "Barmouth", "Barmston", "Barnard Castle", "Barnes", "Barnet", "Barnham", "Barnoldswick", "Barnsley", "Barnstaple", "Barnwell", "Barrow", "Barrow in Furness", "Barrow upon Humber", "Barrow upon Soar", "Barrowford", "Barry", "Barton in Fabis", "Barton on Sea", "Barton under Needwood", "Barton upon Humber", "Barton-le-Clay", "Barwell", "Basildon", "Basingstoke", "Baslow", "Bath", "Bathgate", "Batley", "Battle", "Bawtry", "Bayble", "Bayford", "Beach", "Beaconsfield", "Beal", "Bealings", "Beaminster", "Beaufort", "Beaulieu", "Beauly", "Beaumaris", "Beaumont", "Beaworthy", "Bebington", "Beccles", "Beckenham", "Beckingham", "Beckley", "Beckton", "Bedale", "Bedford", "Bedlington", "Bedminster", "Bedworth", "Beer", "Beeston", "Beith", "Bekesbourne", "Belbroughton", "Belcoo", "Belfast", "Belleek", "Bellshill", "Belmont", "Belper", "Belvedere", "Bembridge", "Ben Rhydding", "Benburb", "Benenden", "Benllech", "Benson", "Bentley", "Berkeley", "Berkhamstead", "Bermondsey", "Berwick", "Berwick-Upon-Tweed", "Besthorpe", "Betchworth", "Bettws", "Betws", "Beverley", "Bewdley", "Bexhill", "Bexleyheath", "Bicester", "Bickenhill", "Bickleigh", "Biddenden", "Biddenham", "Biddulph", "Bideford", "Bidford-on-Avon", "Bidston", "Bierton", "Biggar", "Biggin Hill", "Biggleswade", "Bignor", "Bildeston", "Billericay", "Billesley", "Billingham", "Billingshurst", "Bilsthorpe", "Bilston", "Binfield", "Bingham", "Bingley", "Binsted", "Birchanger", "Birchington", "Birdbrook", "Birkenhead", "Birmingham", "Birnam", "Birstall", "Birtley", "Birtley", "Bishop Auckland", "Bishop Burton", "Bishopbriggs", "Bishops Cleeve", "Bishops Waltham", "Bishopstoke", "Bishopstrow", "Bishopton", "Bisley", "Blackburn", "Blackford", "Blackford", "Blackheath", "Blackpool", "Blackwater", "Blackwater", "Blackwood", "Blackwood", "Blaenau-Ffestiniog", "Blaenavon", "Blaenwaun", "Blaina", "Blairgowrie", "Blakeney", "Blakeney", "Blandford Forum", "Blaydon", "Bledlow", "Bletchingley", "Bletchley", "Blewbury", "Blidworth", "Bloomsbury", "Bloxwich", "Blunham", "Bluntisham", "Blyth", "Bodelwyddan", "Bodmin", "Bognor Regis", "Boldon Colliery", "Bollington", "Bolney", "Bolsover", "Bolton", "Bonar Bridge", "Bonnybridge", "Bonnyrigg", "Bookham", "Bootle", "Bordesley", "Boreham", "Borehamwood", "Borough Green", "Boroughbridge", "Bosbury", "Boscastle", "Boston", "Boston Spa", "Botesdale", "Bothwell", "Botley", "Bottesford", "Bourne", "Bourne End", "Bournemouth", "Bournville", "Bourton on the Water", "Bovey Tracey", "Bow", "Bowdon", "Bowes", "Bowness-on-Windermere", "Box", "Boxley", "Bozeat", "Brackley", "Bracknell", "Bradfield St George", "Bradford", "Bradford-on-Avon", "Bradwell on Sea", "Braintree", "Bramford", "Bramhall", "Bramley", "Brampton", "Brandesburton", "Brandon", "Brandon", "Brandon", "Bransford", "Bransgore", "Brasted", "Braunstone", "Braunton", "Brayton", "Brechin", "Brecon", "Bredbury", "Brede", "Brenchley", "Brentford", "Brentwood", "Brewood", "Bridge", "Bridgemary", "Bridgend", "Bridgham", "Bridgnorth", "Bridgwater", "Bridlington", "Bridport", "Brierfield", "Brierley Hill", "Brigg", "Brighouse", "Brightlingsea", "Brighton", "Brigstock", "Brimpton", "Brimscombe", "Bristol", "British Embassy Paris (France), 35 rue du Faubourg St HonorÃ©, Paris Cedex 08, 75383 Paris, France", "British Embassy Madrid (Spain), Torre Emperador Castellana, Paseo de la Castellana 259D, 28046 Madrid, Spain", "British Embassy Washington (USA), 3100 Massachusetts Avenue NW, Washington DC 20008, USA", "British Embassy Ankara (Turkey), Åehit Ersan Caddesi 46/A, Ãankaya, Ankara, Turkey", "Briton Ferry", "Brixham", "Brixton Hill", "Brixworth", "Broad Blunsdon", "Broadstairs", "Broadstone", "Broadwas", "Broadway", "Brockenhurst", "Brockley Green", "Brockworth", "Bromborough", "Bromham", "Brompton", "Bromsgrove", "Bromyard", "Brook", "Brook", "Brooke", "Brookland", "Broom", "Broseley", "Brough", "Broughton", "Broughton", "Broughton", "Broughton", "Broughton", "Broughton", "Broughton", "Broughty Ferry", "Brownhills", "Broxbourne", "Broxburn", "Bruton", "Buckden", "Buckfastleigh", "Buckhurst Hill", "Buckie", "Buckingham", "Buckland", "Buckley", "Bucknell", "Bude", "Budleigh Salterton", "Bugbrooke", "Builth Wells", "Bulford", "Bulkington", "Bulwell", "Bungay", "Buntingford", "Burbage", "Burbage", "Burford", "Burgess Hill", "Burgh le Marsh", "Burghclere", "Burley", "Burnham", "Burnham on Crouch", "Burnham-on-Sea", "Burnley", "Burnopfield", "Burntisland", "Burntwood", "Burry Port", "Burscough", "Burslem", "Burstwick", "Burton", "Burton", "Burton Pidsea", "Burton-on-Trent", "Burwash", "Burwell", "Bury", "Bury", "Bury St Edmunds", "Burythorpe", "Bushey", "Butterton", "Buxted", "Buxton", "Byfield", "Byfleet", "Cadbury", "Caddington", "Caernarfon", "Caerphilly", "Caersws", "Caister-on-Sea", "Caistor", "Caldicot", "Callander", "Callington", "Calne", "Calstock", "Calverton", "Cam", "Camberley", "Camberwell", "Camborne", "Cambridge", "Cambuslang", "Cambusnethan", "Camelford", "Campbeltown", "Canewdon", "Cannock", "Canterbury", "Capel", "Capenhurst", "Carbrooke", "Cardiff", "Cardigan", "Cardonald", "Cardross", "Carlisle", "Carlton", "Carlton", "Carlton le Moorland", "Carluke", "Carmarthen", "Carnforth", "Carnmoney", "Carnoustie", "Carrbridge", "Carrickfergus", "Carrowdore", "Carshalton", "Carterton", "Castle Cary", "Castle Donington", "Castle Douglas", "Castlederg", "Castleford", "Castlereagh", "Castleton", "Castlewellan", "Caston", "Caterham", "Catford", "Catherington", "Catterick", "Caversham", "Cawston", "Caxton", "Caythorpe", "Chacombe", "Chaddesden", "Chadwell", "Chalfont Saint Peter", "Chalgrove", "Chandlers Ford", "Chapel en le Frith", "Chapeltown", "Chard", "Charfield", "Charing Cross", "Charlestown", "Charlton on Otmoor", "Charlwood", "Charmouth", "Chartham", "Chasetown", "Chatham", "Chatteris", "Cheadle", "Cheadle", "Cheadle Hulme", "Cheam", "Checkley", "Cheddar", "Chellaston", "Chelmsford", "Chelsfield", "Cheltenham", "Chepstow", "Chertsey", "Chesham", "Cheshunt", "Chessington", "Chester", "Chester-le-Street", "Chesterfield", "Chestfield", "Chichester", "Chigwell", "Chilbolton", "Chilcompton", "Childwall", "Chilton", "Chilton", "Chilton Trinity", "Chilwell", "Chingford", "Chinley", "Chinnor", "Chippenham", "Chipping Campden", "Chipping Norton", "Chipping Ongar", "Chipping Sodbury", "Chipstead", "Chislehurst", "Chiswick", "Choppington", "Chorley", "Christchurch", "Christleton", "Chryston", "Chulmleigh", "Church", "Church Gresley", "Church Leigh", "Church Stretton", "Churchill", "Cinderford", "Cirencester", "City of London", "City of Westminster", "Clackmannan", "Clacton-on-Sea", "Clapham", "Clapham", "Clapham", "Clarbeston Road", "Clare", "Clare", "Claverdon", "Clavering", "Claygate", "Clayton West", "Cleator", "Cleator Moor", "Cleckheaton", "Clevedon", "Cleveleys", "Cliffe", "Clifton", "Clifton", "Clifton", "Clifton Hampden", "Clipstone", "Clitheroe", "Clovenfords", "Clun", "Clunderwen", "Clutton", "Clydach", "Clydebank", "Coalbrookdale", "Coalisland", "Coalville", "Coatbridge", "Cobham", "Cobham", "Cockerham", "Cockermouth", "Codsall", "Coed-Talon", "Cogenhoe", "Coggeshall", "Colchester", "Coleford", "Coleraine", "Colnbrook", "Colne", "Colne", "Colwyn Bay", "Colyford", "Colyton", "Comber", "Compton", "Compton Dundon", "Comrie", "Congleton", "Conisbrough", "Connahs Quay", "Conon Bridge", "Consett", "Conway", "Cookham", "Cooksbridge", "Cookstown", "Coppenhall", "Coppull", "Corbridge", "Corby", "Corfe Castle", "Corfe Mullen", "Corpach", "Corringham", "Corsham", "Corwen", "Coseley", "Cosham", "Cotgrave", "Cottenham", "Cottered", "Cottingham", "Coulsdon", "Countess Wear", "Coupar Angus", "Covent Garden", "Coventry", "Cowbridge", "Cowden", "Cowdenbeath", "Cowley", "Cradley", "Craigavon", "Cramlington", "Cranbrook", "Cranfield", "Cranford", "Cranleigh", "Crathorne", "Craven Arms", "Crawley", "Crayford", "Crediton", "Crewe", "Crewkerne", "Criccieth", "Crick", "Crickhowell", "Cricklade", "Cricklewood", "Crieff", "Crofton", "Cromer", "Cromwell", "Crook", "Crookham", "Crosby", "Cross", "Cross in Hand", "Cross Keys", "Crossgar", "Crossgates", "Crosshouse", "Croston", "Croughton", "Crowborough", "Crowland", "Crowthorne", "Croxley Green", "Croydon", "Crumlin", "Crymych", "Cublington", "Cuckfield", "Cuffley", "Cullen", "Cullompton", "Cumbernauld", "Cumnock", "Cupar", "Curdridge", "Currie", "Cwmbran", "Cynwyd", "Dagenham", "Dalbeattie", "Dalkeith", "Dalry", "Dalton in Furness", "Daresbury", "Darfield", "Darlaston", "Darlington", "Dartford", "Dartmouth", "Darvel", "Darwen", "Datchet", "Daventry", "Dawley", "Dawlish", "Deal", "Dean", "Deighton", "Denbigh", "Denby", "Denham", "Denny", "Denton", "Deptford", "Derby", "Dereham", "Derwen", "Desborough", "Devizes", "Dewsbury", "Didcot", "Diddington", "Dinas Powys", "Dingestow", "Dingwall", "Dinnington", "Diss", "Doagh", "Dolgelly", "Dollar", "Dollis Hill", "Dolwyddelan", "Donaghadee", "Doncaster", "Donnington", "Dorchester", "Dorking", "Dorney", "Dornoch", "Dorridge", "Douglas", "Doune", "Dover", "Dovercourt", "Downend", "Downham Market", "Downpatrick", "Draperstown", "Draycott", "Draycott in the Moors", "Drayton", "Drayton Bassett", "Drayton Saint Leonard", "Driffield", "Drighlington", "Droitwich", "Dromara", "Dromore", "Dronfield", "Droxford", "Droylsden", "Drumahoe", "Drumchapel", "Drybrook", "Drymen", "Duddington", "Dudley", "Duffield", "Duffus", "Dukinfield", "Dulverton", "Dulwich", "Dumbarton", "Dumbleton", "Dumfries", "Dunbar", "Dunblane", "Dunchurch", "Dundee", "Dundonald", "Dunfermline", "Dungannon", "Dungiven", "Dunkeld", "Dunkeswell", "Dunmurry", "Dunning", "Dunoon", "Duns", "Dunstable", "Durham", "Durrington", "Dursley", "Duxford", "Dyce", "Dymock", "Dyserth", "Eagle", "Eaglesfield", "Eaglesham", "Earley", "Earlham", "Earls Colne", "Earls Court", "Earlston", "Earnley", "Easington", "Easingwold", "East Barnet", "East Bergholt", "East Boldon", "East Budleigh", "East Challow", "East Cowes", "East Down", "East Dulwich", "East Grinstead", "East Hagbourne", "East Ham", "East Hanningfield", "East Harling", "East Hoathly", "East Horsley", "East Keal", "East Kilbride", "East Leake", "East Linton", "East Malling", "East Molesey", "East Peckham", "East Preston", "East Retford", "East Stour", "East Tilbury", "Eastbourne", "Eastchurch", "Eastcote", "Eastham", "Eastington", "Eastleigh", "Easton", "Eastwood", "Ebbw Vale", "Eccles", "Eccleshall", "Edenbridge", "Edenfield", "Edgbaston", "Edgefield", "Edgware", "Edinburgh", "Edmonton", "Edwalton", "Edwinstowe", "Effingham", "Egerton", "Egham", "Egremont", "Egton", "Elderslie", "Elgin", "Elland", "Ellesmere", "Ellesmere Port", "Ellington", "Ellon", "Elloughton", "Elmley Lovett", "Elstead", "Elstree", "Elsworth", "Eltham", "Ely", "Ely", "Empingham", "Emsworth", "Enfield", "Englefield Green", "Enniskillen", "Enstone", "Epping", "Epping Green", "Epsom", "Erdington", "Erith", "Esher", "Essendon", "Etchingham", "Eton", "Eversholt", "Evesham", "Ewelme", "Ewhurst", "Exeter", "Exminster", "Exmouth", "Eye", "Eyemouth", "Eynsham", "Failsworth", "Fairford", "Fairlight", "Fakenham", "Falkirk", "Falkland", "Falmouth", "Fangfoss", "Fareham", "Faringdon", "Farmborough", "Farnborough", "Farndon", "Farnham", "Farnham Royal", "Farningham", "Farnworth", "Fauldhouse", "Faulkland", "Faversham", "Felbridge", "Felixstowe", "Felsted", "Feltham", "Ferndale", "Ferryhill", "Ferryside", "Filey", "Fillongley", "Finchampstead", "Finchley", "Finedon", "Fintry", "Fishburn", "Fishguard", "Fitzwilliam", "Fivemiletown", "Fladbury", "Fleet", "Fleetwood", "Flint", "Flitwick", "Flordon", "Fochabers", "Folkestone", "Ford", "Fordingbridge", "Forest Row", "Forfar", "Formby", "Forres", "Fort William", "Four Marks", "Fowey", "Fownhope", "Framlingham", "Frant", "Fraserburgh", "Freckleton", "Frensham", "Freshwater", "Fressingfield", "Friern Barnet", "Frimley", "Fringford", "Frinton-on-Sea", "Friskney", "Frithville", "Frizington", "Frodsham", "Froggatt", "Frome", "Fulham", "Fulmer", "Gaerwen", "Gainsborough", "Galashiels", "Galston", "Gamlingay", "Gargrave", "Gargunnock", "Garrison", "Garstang", "Garston", "Garth", "Gateshead", "Gatwick", "Gaydon", "Gayton Thorpe", "Gelligaer", "Gifford", "Giggleswick", "Gillingham", "Gillingham", "Gipping", "Girton", "Girvan", "Glasdrumman", "Glasgow", "Glastonbury", "Glenboig", "Glenrothes", "Glenshee", "Glentham", "Glossop", "Gloucester", "Gnosall", "Godalming", "Godmanchester", "Godmersham", "Godstone", "Golborne", "Gomersal", "Goodmayes", "Goodwick", "Goole", "Goostrey", "Gordon", "Gorebridge", "Goring", "Goring", "Gorleston-on-Sea", "Gorseinon", "Gorslas", "Gorton", "Gosberton", "Gosfield", "Gosforth", "Gosport", "Goudhurst", "Gourock", "Granby", "Grange", "Grangemouth", "Grantham", "Grantown on Spey", "Grasmere", "Grateley", "Graveley", "Gravesend", "Grays", "Great Amwell", "Great Baddow", "Great Barton", "Great Billing", "Great Chesterford", "Great Dunmow", "Great Fransham", "Great Gidding", "Great Glemham", "Great Gransden", "Great Milton", "Great Missenden", "Great Ryburgh", "Great Staughton", "Great Torrington", "Great Waldingfield", "Great Yarmouth", "Greenfield", "Greenford", "Greenhead", "Greenhithe", "Greenisland", "Greenock", "Greensted", "Greenwich", "Grendon", "Grendon Underwood", "Gresford", "Gretna", "Gretna Green", "Gretton", "Grimsargh", "Grimsby", "Groombridge", "Grove", "Guildford", "Guisborough", "Guiseley", "Gullane", "Gunnislake", "Guthrie", "Hackbridge", "Hackney", "Haddenham", "Haddington", "Hadleigh", "Hadleigh", "Hadlow", "Hadlow Down", "Hagley", "Hailsham", "Halesowen", "Halesworth", "Halewood", "Halifax", "Halstead", "Halstead", "Halton", "Haltwhistle", "Halwell", "Hamble", "Hambleden", "Hambleton", "Hamilton", "Hammersmith", "Hampton", "Hampton", "Hampton Lucy", "Handcross", "Handforth", "Handsworth", "Hanley", "Hanwell", "Hanworth", "Hapton", "Harby", "Hardham", "Harefield", "Harlaxton", "Harlech", "Harlesden", "Harleston", "Harlow", "Harold Wood", "Harpenden", "Harrogate", "Harrold", "Harrow", "Harrow on the Hill", "Harrow Weald", "Hartfield", "Hartford", "Hartlepool", "Hartley", "Hartpury", "Hartwell", "Harwell", "Harwich", "Harworth", "Haslemere", "Haslingden", "Hassocks", "Hastings", "Hatch", "Hatfield", "Hatherleigh", "Hathersage", "Hatton", "Havant", "Haverfordwest", "Haverhill", "Havering atte Bower", "Hawarden", "Hawes", "Hawick", "Hawkhurst", "Hawkwell", "Hawley", "Haydock", "Haydon Bridge", "Hayes", "Hayes", "Hayle", "Haywards Heath", "Hazel Grove", "Hazelwood", "Headcorn", "Headington", "Headley", "Heanor", "Heath", "Heathfield", "Heathrow", "Hebburn", "Hebden Bridge", "Heckington", "Heckmondwike", "Hedgerley", "Hednesford", "Hedon", "Helens Bay", "Helensburgh", "Hellesdon", "Helmsley", "Helston", "Hemel Hempstead", "Hemingstone", "Hemswell", "Hemsworth", "Hendon", "Henfield", "Hengoed", "Henham", "Henley", "Henley-on-Thames", "Henlow", "Hennock", "Henstridge", "Hereford", "Heriot", "Hermitage", "Herne Bay", "Herriard", "Hersham", "Herstmonceux", "Hertford", "Hessle", "Heston", "Heswall", "Hever", "Hexham", "Heybridge", "Heysham", "Heythrop", "Heywood", "High Bentham", "High Blantyre", "High Halden", "High Legh", "High Peak", "High Peak Junction", "High Wycombe", "Higham Ferrers", "Higham on the Hill", "Highbridge", "Highbury", "Highcliffe", "Higher Bebington", "Hightown", "Highway", "Highworth", "Hilborough", "Hilderstone", "Hill", "Hillingdon", "Hillsborough", "Hillside", "Hilton", "Hinckley", "Hindhead", "Hindley", "Hindon", "Hingham", "Hinton St George", "Histon", "Hitcham", "Hitchin", "Hockley", "Hoddesdon", "Holbeach", "Holborn", "Holmes Chapel", "Holmewood", "Holmfirth", "Holsworthy", "Holt", "Holt", "Holyhead", "Holywell", "Holywell", "Holywood", "Honingham", "Honiton", "Hook", "Hooke", "Hopwood", "Horam", "Horbling", "Horbury", "Horley", "Horley", "Horncastle", "Hornchurch", "Horndean", "Horndon on the Hill", "Hornsea", "Hornsey", "Horrabridge", "Horsham", "Horsmonden", "Horsted Keynes", "Horton Kirby", "Horwich", "Hotham", "Houghton on the Hill", "Houghton Regis", "Houghton-le-Spring", "Houston", "Hove", "Howden", "Hoylake", "Hucknall Torkard", "Hucknall under Huthwaite", "Huddersfield", "Huish", "Hull", "Humberston", "Humbie", "Hungerford", "Hunstanton", "Huntingdon", "Huntly", "Huntspill", "Hursley", "Hurstbourne Tarrant", "Hurstpierpoint", "Hurworth", "Huyton", "Hyde", "Hythe", "Ibstock", "Ickenham", "Ifield", "Ilchester", "Ilford", "Ilfracombe", "Ilkeston", "Ilkley", "Ilminster", "Immingham", "Inchinnan", "Ingatestone", "Innerleithen", "Insch", "Inveraray", "Invergordon", "Inverkeilor", "Inverkeithing", "Inverkip", "Inverness", "Inverness-shire", "Inverurie", "Ipswich", "Irlam", "Irthlingborough", "Irvine", "Isham", "Isleham", "Isleworth", "Islington", "Islip", "Itchen", "Itchen Abbas", "Iver", "Ivybridge", "Iwerne Courtney", "Jarrow", "Jedburgh", "Johnstone", "Jordanstown", "Juniper Green", "Kedington", "Keele", "Keighley", "Keith", "Kelbrook", "Kelly", "Kelmarsh", "Kelsall", "Kelso", "Kelty", "Kelvedon", "Kempston", "Kendal", "Kenilworth", "Kenley", "Kennington", "Kennoway", "Kensington", "Kent", "Keresley", "Keston", "Keswick", "Ketley", "Kettering", "Keynsham", "Kibworth Harcourt", "Kidderminster", "Kidlington", "Kidsgrove", "Kidwelly", "Kilbarchan", "Kilbirnie", "Kilbride", "Kilbride", "Kilkeel", "Killamarsh", "Killin", "Kilmacolm", "Kilmarnock", "Kilsyth", "Kilwinning", "Kimberley", "Kimbolton", "Kingham", "Kinghorn", "Kinglassie", "Kings Langley", "Kings Lynn", "Kings Norton", "Kings Sutton", "Kingsbridge", "Kingskerswell", "Kingsland", "Kingsteignton", "Kingston", "Kingston", "Kingston Seymour", "Kingswinford", "Kingswood", "Kingswood", "Kingussie", "Kinloch Rannoch", "Kinmel", "Kinnerley", "Kinross", "Kirby Cross", "Kirk Ella", "Kirkby", "Kirkby in Ashfield", "Kirkby Stephen", "Kirkcaldy", "Kirkconnel", "Kirkcudbright", "Kirkham", "Kirkintilloch", "Kirkliston", "Kirkwall", "Kirriemuir", "Kirtlington", "Kirton in Lindsey", "Knaresborough", "Knebworth", "Kneeton", "Knighton", "Knottingley", "Knowsley", "Knutsford", "Kyle of Lochalsh", "Laindon", "Lakenheath", "Lambeth", "Lambourn", "Lampeter", "Lanark", "Lancaster", "Lancing", "Landrake", "Langho", "Langley", "Langport", "Langstone", "Lapworth", "Larbert", "Largs", "Larkhall", "Larne", "Lauder", "Laugharne", "Launceston", "Laurencekirk", "Lavant", "Lavendon", "Lawrencetown", "Laxfield", "Laxton", "Leatherhead", "Lechlade", "Leconfield", "Ledbury", "Lee", "Lee-on-the-Solent", "Leeds", "Leeds", "Leek", "Leek Wootton", "Leicester", "Leigh", "Leigh", "Leigh-on-Sea", "Leighton Buzzard", "Leiston", "Leitholm", "Lenham", "Leominster", "Lerwick", "Lesmahagow", "Letchworth", "Leuchars", "Leven", "Levenshulme", "Lewes", "Lewisham", "Leyburn", "Leyland", "Leysdown-on-Sea", "Leyton", "Lichfield", "Lidlington", "Lifton", "Limavady", "Limekilns", "Lincoln", "Lindal in Furness", "Lindfield", "Lingfield", "Linlithgow", "Linthwaite", "Linton", "Linton", "Linton upon Ouse", "Liphook", "Lisburn", "Liskeard", "Lisnaskea", "Liss", "Litherland", "Little Barningham", "Little Canfield", "Little Eaton", "Little Gaddesden", "Little Hulton", "Little Kimble", "Little Lever", "Little Milton", "Little Paxton", "Littleborough", "Littlebury", "Littlehampton", "Littleport", "Liverpool", "Liversedge", "Livingston", "Llanbedr", "Llanddulas", "Llandeilo", "Llandovery", "Llandrillo", "Llandrindod Wells", "Llandudno", "Llandudno Junction", "Llanelli", "Llanfair-Dyffryn-Clwyd", "Llanfairfechan", "Llanfyllin", "Llanfyrnach", "Llangattock", "Llangefni", "Llangennech", "Llangollen", "Llanharan", "Llanidloes", "Llanishen", "Llanon", "Llanrwst", "Llansantffraid-ym-Mechain", "Llantrisant", "Llantrisant", "Llantwit Fardre", "Llantwit Major", "Llanwrda", "Llanwrtyd Wells", "Llanymynech", "Llwyngwril", "Llwynypia", "Loanhead", "Lochgelly", "Lochgilphead", "Lochmaddy", "Lochwinnoch", "Lockerbie", "Loddington", "London", "London Borough of Bromley", "London Borough of Hounslow", "London Borough of Wandsworth", "Londonderry", "Long Buckby", "Long Ditton", "Long Eaton", "Long Melford", "Long Stratton", "Longdown", "Longfield", "Longhope", "Longniddry", "Longport", "Longridge", "Longstanton", "Longton", "Looe", "Loppington", "Lossiemouth", "Lostwithiel", "Loudwater", "Loughborough", "Loughor", "Loughton", "Louth", "Low Ham", "Lowdham", "Lower Beeding", "Lower Brailes", "Lower Darwen", "Lowestoft", "Lowton", "Lubenham", "Ludlow", "Lupton", "Lurgan", "Lustleigh", "Luton", "Lutterworth", "Lydbury North", "Lydney", "Lyme Regis", "Lyminge", "Lymington", "Lymm", "Lympsham", "Lyndhurst", "Lyng", "Lytchett Minster", "Lytham", "Mablethorpe", "Macclesfield", "Macduff", "Machynlleth", "Maerdy", "Maesteg", "Maghera", "Magherafelt", "Magheralin", "Maghull", "Maida Vale", "Maiden Newton", "Maidenhead", "Maidstone", "Malden", "Maldon", "Mallaig", "Malmesbury", "Malpas", "Malton", "Malvern", "Manchester", "Manningtree", "Manor", "Mansfield", "Mansfield Woodhouse", "Manton", "March", "Marcham", "Marden", "Margate", "Marhamchurch", "Mark", "Market Deeping", "Market Drayton", "Market Harborough", "Market Rasen", "Market Weighton", "Markfield", "Marlborough", "Marlow", "Marnhull", "Marple", "Marr", "Marsham", "Marske", "Martin", "Martley", "Martock", "Maryhill", "Maryport", "Masham", "Matching", "Matlock", "Mattishall", "Mauchline", "Maulden", "Maybole", "Mayfair", "Mayfield", "Mayfield", "Meanwood", "Measham", "Medmenham", "Medstead", "Meesden", "Meggies", "Meifod", "Melbourne", "Meldreth", "Melksham", "Mells", "Melrose", "Melton", "Melton Constable", "Melton Mowbray", "Menai Bridge", "Mendlesham", "Menheniot", "Menston", "Meopham", "Mere", "Merthyr Mawr", "Merthyr Tydfil", "Merton", "Metheringham", "Methil", "Mexborough", "Mickleton", "Mickleton", "Mid Calder", "Middlesbrough", "Middleton", "Middleton", "Middleton", "Middleton One Row", "Middlewich", "Midford", "Midgham", "Midhurst", "Midsomer Norton", "Mildenhall", "Milford", "Milford Haven", "Milford on Sea", "Mill Hill", "Millbrook", "Millbrook", "Millom", "Milltimber", "Milnathort", "Milnthorpe", "Milton", "Milton", "Milton", "Milton Keynes", "Milton on Stour", "Minchinhampton", "Minehead", "Minster", "Minster Lovell", "Minsterley", "Mirfield", "Mitcham", "Mitcheldean", "Mobberley", "Mochdre", "Moira", "Mold", "Molesey", "Molesey", "Mollington", "Moneymore", "Monifieth", "Monkswood", "Monkton", "Monmouth", "Montgomery", "Montrose", "Monyash", "Moorsholm", "Moorside", "Morden", "More", "Morecambe", "Moreton", "Moreton in Marsh", "Morley", "Morpeth", "Morriston", "Moseley", "Moss", "Mossley", "Moston", "Motherwell", "Moulton", "Moulton St Michael", "Moulton St Michael", "Mount Bures", "Mount Hamilton", "Mountain Ash", "Mountsorrel", "Much Hadham", "Much Hoole", "Much Wenlock", "Muir of Ord", "Mundesley", "Murton", "Musselburgh", "Myddle", "Mytholmroyd", "Myton on Swale", "Nafferton", "Nailsea", "Nairn", "Nantwich", "Nantyglo", "Napton on the Hill", "Narberth", "Naseby", "Nash", "Nassington", "Neasden", "Neath", "Needingworth", "Neilston", "Nelson", "Nelson", "Neston", "Nettlebed", "Nettleton", "New Barnet", "New Buckenham", "New Cross", "New Ferry", "New Mills", "New Milton", "New Quay", "New Romney", "New Southgate", "New Tredegar", "Newark on Trent", "Newbiggin-by-the-Sea", "Newbold", "Newbridge", "Newbridge", "Newburgh", "Newbury", "Newcastle", "Newcastle", "Newcastle Emlyn", "Newcastle upon Tyne", "Newcastle-under-Lyme", "Newent", "Newhall", "Newham", "Newham", "Newhaven", "Newick", "Newlands", "Newmarket", "Newport", "Newport", "Newport", "Newport", "Newport", "Newport Pagnell", "Newport-On-Tay", "Newquay", "Newry", "Newton Abbot", "Newton Aycliffe", "Newton on Trent", "Newton Stewart", "Newton-le-Willows", "Newtonmore", "Newtown", "Newtownabbey", "Newtownards", "Norbury", "Nordelph", "Norham", "Normandy", "Normanton", "North Berwick", "North Elmsall", "North Ferriby", "North Hykeham", "North Kilworth", "North Leigh", "North Moreton", "North Newton", "North Petherton", "North Shields", "North Somercotes", "North Tawton", "North Walsham", "North Waltham", "North Weald", "Northallerton", "Northampton", "Northenden", "Northfield", "Northfleet", "Northleach", "Northolt", "Northop", "Northrepps", "Northwich", "Northwood", "Norton", "Norton", "Norton", "Norton Lindsey", "Norwich", "Norwood", "Nottingham", "Nuffield", "Nuneaton", "Nutfield", "Nutley", "Oadby", "Oakamoor", "Oakford", "Oakham", "Oakhill", "Oakley", "Oare", "Oban", "Odiham", "Offord Cluny", "Okehampton", "Old Basing", "Old Buckenham", "Old Colwyn", "Old Malton", "Old Windsor", "Oldbury", "Oldbury", "Oldham", "Oldmeldrum", "Olney", "Omagh", "Ormesby", "Ormiston", "Ormskirk", "Orpington", "Ossett", "Oswaldtwistle", "Oswestry", "Otford", "Otley", "Otley", "Otterburn", "Ottershaw", "Ottery St Mary", "Oulton", "Oundle", "Overton", "Oving", "Ovingdean", "Owslebury", "Oxenhope", "Oxford", "Oxshott", "Oxted", "Padbury", "Paddock Wood", "Padiham", "Padstow", "Paignton", "Painswick", "Paisley", "Palmers Green", "Pampisford", "Papworth Everard", "Par", "Parbold", "Partington", "Partridge Green", "Paston", "Patchway", "Pathhead", "Patrington", "Paul", "Peebles", "Pelsall", "Pembroke", "Pembroke Dock", "Pembury", "Penarth", "Pencader", "Pencaitland", "Pencarreg", "Pencoed", "Pendlebury", "Penicuik", "Penkridge", "Penn", "Pennington", "Penrice", "Penrith", "Penryn", "Penshurst", "Pentraeth", "Penwortham", "Penzance", "Perivale", "Perranporth", "Pershore", "Perth", "Peterborough", "Peterculter", "Peterhead", "Peterlee", "Petersfield", "Petworth", "Pevensey", "Pewsey", "Pickering", "Piddington", "Pilham", "Pilton", "Pinner", "Pinxton", "Pitlochry", "Pitsford", "Pittenweem", "Plaistow", "Plaitford", "Pleshey", "Plockton", "Plumstead", "Plymouth", "Plymstock", "Pocklington", "Polegate", "Polmont", "Polperro", "Ponders End", "Pontardawe", "Pontefract", "Ponteland", "Pontesbury", "Pontycymer", "Pontypool", "Pontypridd", "Poole", "Poplar", "Porlock", "Port Erroll", "Port Glasgow", "Port Sunlight", "Port Talbot", "Portadown", "Portaferry", "Portchester", "Portglenone", "Porth", "Porthcawl", "Porthleven", "Portishead", "Portlethen", "Portmadoc", "Portree", "Portrush", "Portslade-by-Sea", "Portsmouth", "Portstewart", "Postling", "Potters Bar", "Potterspury", "Potton", "Poulton le Fylde", "Powfoot", "Powick", "Poynton", "Prees", "Preesall", "Prescot", "Prestatyn", "Presteigne", "Preston", "Prestonpans", "Prestwich", "Prestwick", "Princes Risborough", "Princethorpe", "Privett", "Prudhoe", "Puckeridge", "Pudsey", "Pulborough village hall", "Pulloxhill", "Purfleet", "Purleigh", "Purley", "Pwllheli", "Pyle", "Quedgeley", "Queenborough", "Queensferry", "Quinton", "Radcliffe", "Radcliffe on Trent", "Radlett", "Radnage", "Radstock", "Rainford", "Rainham", "Rainham", "Rainhill", "Rainworth", "Ramsbottom", "Ramsbury", "Ramsey", "Ramsey Saint Marys", "Ramsgate", "Randalstown", "Ratcliffe on Soar", "Rathfriland", "Ravenstone", "Rawmarsh", "Rawreth", "Rawtenstall", "Rayleigh", "Rayne", "Raynes Park", "Reading", "Redbourn", "Redcar", "Reddish", "Redditch", "Redhill", "Redhill", "Redland", "Redruth", "Reed", "Reepham", "Reigate", "Renfrew", "Renton", "Repton", "Reydon", "Rhayader", "Rhondda", "Rhoose", "Rhos-on-Sea", "Rhyl", "Richmond", "Richmond", "Rickmansworth", "Ridingmill", "Rimington", "Ringmer", "Ringwood", "Ripe", "Ripley", "Ripley", "Ripon", "Ripponden", "Risca", "Risley", "River", "Rivington", "Roade", "Roath", "Robertsbridge", "Rochdale", "Roche", "Rochester", "Rochford", "Rock", "Rock Ferry", "Roehampton", "Roffey", "Rogerstone", "Rogiet", "Romford", "Romsey", "Ross on Wye", "Rosslea", "Rosyth", "Rothbury", "Rotherfield", "Rotherham", "Rothesay", "Rothwell", "Rothwell", "Rottingdean", "Rowde", "Rowhedge", "Rowlands Castle", "Rowlands Gill", "Rowley Regis", "Roxwell", "Royal Leamington Spa", "Royal Tunbridge Wells", "Royal Wootton Bassett", "Roydon", "Royston", "Royston", "Ruabon", "Ruddington", "Rugby", "Rugeley", "Ruislip", "Runcorn", "Rushden", "Rushden", "Rustington", "Rutherglen", "Ruthin", "Ryde", "Rye", "Ryton", "Sacriston", "Saffron Walden", "Saint Agnes", "Saint Annes on the Sea", "Saint Bees", "Saint Brides Major", "Saint Clears", "Saint Columb Major", "Saint Erme", "Saint Ives", "Saint Leonards-on-Sea", "Saint Neots", "Sale", "Salford", "Salfords", "Salisbury", "Saltash", "Saltburn-by-the-Sea", "Saltcoats", "Salthouse", "Sandbach", "Sanderstead", "Sandhurst", "Sandiacre", "Sandown", "Sandwell", "Sandwich", "Sandy", "Sandycroft", "Sanquhar", "Sarratt", "Saundersfoot", "Sawbridgeworth", "Sawley", "Saxmundham", "Saxtead", "Scalby", "Scapa", "Scarborough", "Scunthorpe", "Seacroft", "Seaford", "Seaham", "Seale", "Seascale", "Seaton", "Seaton", "Seaview", "Sedbergh", "Sedgeberrow", "Sedgefield", "Sedgley", "Seend", "Seghill", "Selborne", "Selby", "Selkirk", "Selsey", "Selston", "Send", "Settle", "Seven Kings", "Sevenoaks", "Shadoxhurst", "Shaftesbury", "Shalford", "Shalford", "Shanklin", "Shardlow", "Shaw", "Shawbury", "Sheering", "Sheerness", "Sheffield", "Shefford", "Sheldon", "Shelford", "Shenfield", "Shepperton", "Shepshed", "Shepton Mallet", "Sherborne", "Sherfield upon Loddon", "Sheringham", "Shifnal", "Shildon", "Shilton", "Shinfield", "Shipley", "Shipston on Stour", "Shirebrook", "Shirehampton", "Shireoaks", "Shoeburyness", "Shoreham-by-Sea", "Shotley Gate", "Shotton", "Shotts", "Shrewsbury", "Shrivenham", "Sidcot", "Sidcup", "Sidlesham", "Sidmouth", "Sileby", "Silloth", "Silsden", "Silsoe", "Silverdale", "Silverstone", "Sittingbourne", "Skegness", "Skelmersdale", "Skelmorlie", "Skelton", "Skilgate", "Skipton", "Slapton", "Slawitt", "Sleaford", "Slinfold", "Slough", "Smalley", "Smarden", "Smethwick", "Snaresbrook", "Snettisham", "Snodland", "Soham", "Solihull", "Somerset", "Somersham", "Somerton", "Sompting", "Sonning", "South Benfleet", "South Brent", "South Brewham", "South Carlton", "South Cave", "South Cerney", "South Elmsall", "South Hayling", "South Hetton", "South Killingholme", "South Milford", "South Molton", "South Normanton", "South Ockendon", "South Petherton", "South Shields", "Southall", "Southam", "Southampton", "Southbourne", "Southend-on-Sea", "Southgate", "Southgate", "Southminster", "Southport", "Southsea", "Southwark", "Southwater", "Southwell", "Southwick", "Southwold", "Sowerby Bridge", "Spalding", "Sparsholt", "Speke", "Speldhurst", "Spennymoor", "Spetisbury", "Spilsby", "Spittal", "Spondon", "Spratton", "Sprowston", "Square", "St Albans", "St Andrews", "St Asaph", "St Austell", "St Helens", "St Ives", "St. Dogmaels", "Stafford", "Staindrop", "Staines", "Stalham", "Stallingborough", "Stalybridge", "Stamford", "Stanbridge", "Standlake", "Stanford", "Stanford", "Stanford", "Stanground", "Stanhope", "Stanley", "Stanmore", "Stanstead", "Stansted", "Stanton", "Stanton", "Stanton Fitzwarren", "Stanwell", "Staple", "Staplehurst", "Star", "Staverton", "Stawell", "Steeple Claydon", "Steeton", "Stepps", "Stevenage", "Stevenston", "Steventon", "Stewarton", "Steyning", "Stiffkey", "Stifford", "Stillington", "Stirling", "Stisted", "Stock", "Stockbridge", "Stockcross", "Stockport", "Stocksbridge", "Stocksfield", "Stockton", "Stockton-on-Tees", "Stoke", "Stoke by Nayland", "Stoke Climsland", "Stoke Newington", "Stoke Poges", "Stoke Prior", "Stoke upon Tern", "Stoke-on-Trent", "Stokesley", "Stone", "Stone", "Stone Allerton", "Stonehaven", "Stonehouse", "Stoneleigh", "Stonesfield", "Stony Stratford", "Stornoway", "Storrington", "Stotfold", "Stourbridge", "Stourport On Severn", "Stow", "Stow", "Stow on the Wold", "Stowe", "Stowmarket", "Strabane", "Stranmillis", "Stranraer", "Stratfield Mortimer", "Stratford", "Stratford-upon-Avon", "Strathaven", "Strathmiglo", "Strathyre", "Streatham", "Streatley", "Stretford", "Stretton on Fosse", "Stromness", "Strood", "Stroud", "Stuartfield", "Studham", "Studley", "Studley", "Sturmer", "Sturminster Newton", "Stutton", "Sudbury", "Sully", "Sunbury-on-Thames", "Sunderland", "Sundon Park", "Sunningdale", "Sunninghill", "Surbiton", "Surrey", "Sutton", "Sutton Bridge", "Sutton Coldfield", "Sutton Courtenay", "Sutton in Ashfield", "Sutton on Hull", "Sutton on the Hill", "Sutton on Trent", "Swadlincote", "Swaffham", "Swalwell", "Swanage", "Swanland", "Swanscombe", "Swansea", "Swavesey", "Swaythling", "Swindon", "Swindon Village", "Swinton", "Swynnerton", "Symington", "Syston", "Tackley", "Tadcaster", "Tadley", "Tadmarton", "Tadworth", "Tain", "Takeley", "Talgarth", "Talsarnau", "Talybont", "Tamworth", "Tandragee", "Tansley", "Taplow", "Tarbert", "Tarleton", "Tarporley", "Tatsfield", "Tattershall", "Taunton", "Tavistock", "Taynuilt", "Tayport", "Teddington", "Teddington", "Teignmouth", "Telford", "Temple", "Templecombe", "Templepatrick", "Tempo", "Tenbury Wells", "Tenby", "Tendring", "Tenterden", "Tetbury", "Tetsworth", "Tewin", "Tewkesbury", "Teynham", "Thakeham", "Thame", "Thames Ditton", "Thatcham", "The Hyde", "Theale", "Theale", "Thetford", "Theydon Bois", "Thirsk", "Thornaby", "Thornaby", "Thornbury", "Thornton", "Thornton", "Thornton Heath", "Thornton-in-Craven", "Thorpe St Peter", "Thorrington", "Thrapston", "Three Legged Cross", "Threlkeld", "Thurleigh", "Thurso", "Thurston", "Ticehurst", "Ticknall", "Tideswell", "Tilbury", "Tile Hill", "Tilehurst", "Tillicoultry", "Tillingham", "Timperley", "Tipton", "Tiptree", "Tisbury", "Tiverton", "Toddington", "Todmorden", "Tollard Royal", "Tollerton", "Tonbridge", "Tongham", "Tonypandy", "Tonyrefail", "Torpoint", "Torquay", "Totnes", "Tottenham", "Totteridge", "Totternhoe", "Totton", "Towcester", "Tranent", "Tredegar", "Trefonen", "Treforest", "Tregarth", "Trehafod", "Treharris", "Treherbert", "Trent", "Treorchy", "Treuddyn", "Trimdon", "Tring", "Troon", "Trowbridge", "Truro", "Trusthorpe", "Tunstall", "Turnberry", "Turriff", "Turvey", "Tweedmouth", "Twickenham", "Twyford", "Twyford", "Tyldesley", "Tynemouth", "Tywardreath", "Uckfield", "Uddingston", "Ufford", "Ulceby", "Ulcombe", "Ullesthorpe", "Ulverston", "Unstone", "Uphall", "Upminster", "Upper Beeding", "Upper Slaughter", "Uppingham", "Upton", "Upton", "Upton", "Upton upon Severn", "Upwell", "Urchfont", "Urmston", "Ushaw Moor", "Usk", "Uttoxeter", "Uxbridge", "Uxbridge", "Valley", "Ventnor", "Verwood", "Victoria", "Voe", "Waddesdon", "Wadebridge", "Wadhurst", "Wakefield", "Waldringfield", "Wales", "Walford", "Walgrave", "Walkden", "Walker", "Wallasey", "Wallingford", "Wallington", "Wallsend", "Walmer", "Walsall", "Waltham", "Waltham", "Waltham Abbey", "Waltham Cross", "Walthamstow", "Walton on Thames", "Walton on the Hill", "Walton on the Hill", "Walton-on-the-Naze", "Wanstead", "Wantage", "Warden", "Ware", "Wareham", "Warfield", "Wargrave", "Waringstown", "Warlingham", "Warmington", "Warminster", "Warrenpoint", "Warrington", "Warton", "Warwick", "Washington", "Watchet", "Watchfield", "Water Orton", "Waterbeach", "Waterlooville", "Watford", "Wath upon Dearne", "Watlington", "Wattisfield", "Watton", "Weald", "Wealdstone", "Weare", "Weaverham", "Wedmore", "Wednesbury", "Wednesfield", "Weedon", "Weedon Bec", "Well", "Welling", "Wellingborough", "Wellington", "Wellington", "Wells", "Welshpool", "Welwyn", "Welwyn Garden City", "Wem", "Wembley", "Wemyss Bay", "Wendover", "Wentworth", "Weobley", "West Ashby", "West Bromwich", "West Byfleet", "West Calder", "West Clandon", "West Cowes", "West Drayton", "West Drayton", "West Grinstead", "West Horsley", "West Kilbride", "West Kirby", "West Langdon", "West Linton", "West Malling", "West Mersea", "West Raynham", "West Row", "West Rudham", "West Wickham", "West Wickham", "West Wittering", "Westbury", "Westbury-sub-Mendip", "Westcott", "Westerham", "Westfield", "Westgate", "Westgate on Sea", "Westhay", "Westhoughton", "Westleigh", "Westleton", "Weston", "Weston", "Weston in Gordano", "Weston under Lizard", "Weston-super-Mare", "Wetherby", "Wethersfield", "Weybridge", "Weymouth", "Whaley Bridge", "Whalley", "Wheathampstead", "Wheatley", "Wheaton Aston", "Whetstone", "Whickham", "Whimple", "Whisby", "Whitbourne", "Whitburn", "Whitby", "Whitchurch", "Whitchurch", "Whitchurch", "Whitchurch", "Whitefield", "Whitehaven", "Whitehouse", "Whiteparish", "Whitland", "Whitley Bay", "Whitnash", "Whitstable", "Whittlebury", "Whittlesey", "Whittlesford", "Whitton", "Whitwell", "Whitwick", "Whyteleafe", "Wick", "Wick", "Wick", "Wick", "Wicken", "Wickersley", "Wickford", "Wickham", "Wickham Bishops", "Wickham Market", "Widdrington", "Widmerpool", "Widnes", "Wigan", "Wigston", "Wigton", "Wilburton", "Wilden", "Willaston", "Willenhall", "Willesden", "Willingale Doe", "Willingham", "Willington", "Willington", "Willington Quay", "Wilmington", "Wilmslow", "Wilnecote", "Wilshamstead", "Wimbledon", "Wimborne Minster", "Wincanton", "Winchester", "Windermere", "Windlesham", "Windsor", "Windsor", "Wing", "Wingate", "Winkleigh", "Winlaton", "Winnersh", "Winnington", "Winsford", "Winslow", "Winterborne Kingston", "Winterbourne Dauntsey", "Winton", "Wirksworth", "Wisbech", "Wishaw", "Witham", "Withernsea", "Withernwick", "Withington", "Witley", "Witney", "Wix", "Woburn Sands", "Woking", "Wokingham", "Wold Newton", "Woldingham", "Wolstanton", "Wolverhampton", "Wolverley", "Wombourne", "Wombwell", "Wooburn", "Woodbridge", "Woodford", "Woodford Green", "Woodhall Spa", "Woodham Ferrers", "Woodhouse", "Woodhouse", "Woodley", "Woodmancote", "Woodsetts", "Woodstock", "Woolacombe", "Woolwich", "Woore", "Wootton", "Wootton", "Wootton", "Wootton", "Worcester", "Worcester Park", "Workington", "Worksop", "Worle", "Worminghall", "Worsley", "Worth", "Worthing", "Wotton Underwood", "Wotton-under-Edge", "Wragby", "Wrangaton", "Wrangle", "Wrawby", "Wraysbury", "Wrea Green", "Wrexham", "Wrington", "Writtle", "Wroughton", "Wroxall", "Wyke", "Wymeswold", "Wymondham", "Wythenshawe", "Wyton", "Wyverstone", "Yarm", "Yate", "Yatton", "Yeadon", "Yelverton", "Yeovil", "York", "Yoxford", "Ystalyfera", "Ystrad Mynach", "Ystradgynlais", "Zeals" ];
+
+
+
+
+
+
+var newICB = [   'NHS Bath and North East Somerset, Swindon and Wiltshire Integrated Care Board (QOX)',   'NHS Bedfordshire, Luton and Milton Keynes Integrated Care Board (QHG)',   'NHS Birmingham and Solihull Integrated Care Board (QHL)',   'NHS Black Country Integrated Care Board (QUA)',   'NHS Bristol, North Somerset and South Gloucestershire Integrated Care Board (QUY)',   'NHS Buckinghamshire, Oxfordshire and Berkshire West Integrated Care Board (QU9)',   'NHS Cambridgeshire and Peterborough Integrated Care Board (QUE)',   'NHS Cheshire and Merseyside Integrated Care Board (QYG)',   'NHS Cornwall and the Isles of Scilly Integrated Care Board (QT6)',   'NHS Coventry and Warwickshire Integrated Care Board (QWU)',   'NHS Derby and Derbyshire Integrated Care Board (QJ2)',   'NHS Devon Integrated Care Board (QJK)',   'NHS Dorset Integrated Care Board (QVV)',   'NHS Frimley Integrated Care Board (QNQ)',   'NHS Gloucestershire Integrated Care Board (QR1)',   'NHS Greater Manchester Integrated Care Board (QOP)',   'NHS Hampshire and Isle of Wight Integrated Care Board (QRL)',   'NHS Herefordshire and Worcestershire Integrated Care Board (QGH)',   'NHS Hertfordshire and West Essex Integrated Care Board (QM7)',   'NHS Humber and North Yorkshire Integrated Care Board (QOQ)',   'NHS Kent and Medway Integrated Care Board (QKS)',   'NHS Lancashire and South Cumbria Integrated Care Board (QE1)',   'NHS Leicester, Leicestershire and Rutland Integrated Care Board (QK1)',   'NHS Lincolnshire Integrated Care Board (QJM)',   'NHS Mid and South Essex Integrated Care Board (QH8)',   'NHS Norfolk and Waveney Integrated Care Board (QMM)',   'NHS North Central London Integrated Care Board (QMJ)',   'NHS North East and North Cumbria Integrated Care Board (QHM)',   'NHS North East London Integrated Care Board (QMF)',   'NHS North West London Integrated Care Board (QRV)',   'NHS Northamptonshire Integrated Care Board (QPM)',   'NHS Nottingham and Nottinghamshire Integrated Care Board (QT1)',   'NHS Shropshire, Telford and Wrekin Integrated Care Board (QOC)',   'NHS Somerset Integrated Care Board (QSL)',   'NHS South East London Integrated Care Board (QKK)',   'NHS South West London Integrated Care Board (QWE)',   'NHS South Yorkshire Integrated Care Board (QF7)',   'NHS Staffordshire and Stoke-on-Trent Integrated Care Board (QNC)',   'NHS Suffolk and North East Essex Integrated Care Board (QJG)',   'NHS Surrey Heartlands Integrated Care Board (QXU)',   'NHS Sussex Integrated Care Board (QNX)',   'NHS West Yorkshire Integrated Care Board (QWO)'];
+
+
+
+const exp = document.getElementById("exp");
+
+
+var regionList = ['East of England','London','Midlands','North East and Yorkshire','North West','South East','South West'];
+
+var id = 'my-autocomplete'
+var element = document.querySelector('#my-autocomplete-container')
+accessibleAutocomplete({
+   element: element,
+   id: id,
+   source: plainEng, 
+   minLength: 1,
+   confirmOnBlur: true,
+   showAllValues: true,
+   placeholder: "Search or select an attribute from a list"
+})
+
+const results = document.getElementsByClassName("autocomplete__option")
+console.log(results)
+
+   element.addEventListener("change", () => {
+      var selection = event.target.value;
+      console.log("wowwwie")
+});
+
+//var id = 'icbSearch'
+//var element = document.querySelector('#icbSearch-container')
+//accessibleAutocomplete({
+//   element: element,
+//   id: id,
+//   source: newICB,
+//   minLength: 1,
+//   confirmOnBlur: true,
+//   showAllValues: true,
+//   placeholder: "Search or select ICBs fron the list"
+//})
+
+
+
+
+   // const showOps = document.getElementById("showOperators");
+   const acContain = document.getElementById("my-autocomplete-container");
+   const acTermChange = document.getElementById("my-autocomplete");
+   const entry = document.getElementById("my-autocomplete");
+
+   const routeRow = document.getElementById("routeRow");
+
+   let selectedList = [];
+
+   
+   var rowNum = 0;
+   acContain.addEventListener("change", () => {
+      var ICBlist = ['NHS Bath and North East Somerset, Swindon and Wiltshire Integrated Care Board','NHS Bedfordshire, Luton and Milton Keynes Integrated Care Board','NHS Birmingham and Solihull Integrated Care Board','NHS Black Country Integrated Care Board','NHS Bristol, North Somerset and South Gloucestershire Integrated Care Board','NHS Buckinghamshire, Oxfordshire and Berkshire West Integrated Care Board','NHS Cambridgeshire and Peterborough Integrated Care Board','NHS Cheshire and Merseyside Integrated Care,Board','NHS Cornwall and the Isles of Scilly Integrated Care Board','NHS Coventry and Warwickshire Integrated Care Board','NHS Derby and Derbyshire Integrated Care Board','NHS Devon Integrated Care Board','NHS Dorset Integrated Care Board','NHS Frimley Integrated Care Board','NHS Gloucestershire Integrated Care Board','NHS Greater Manchester Integrated Care Board','NHS Hampshire and Isle of Wight Integrated Care Board','NHS Herefordshire and Worcestershire Integrated Care Board','NHS Hertfordshire and West Essex Integrated Care Board','NHS Humber and North Yorkshire Integrated Care Board','NHS Kent and Medway Integrated Care Board','NHS Lancashire and South Cumbria Integrated Care Board','NHS Leicester, Leicestershire and Rutland Integrated Care Board','NHS Lincolnshire Integrated Care Board','NHS Mid and South Essex Integrated Care Board','NHS Norfolk and Waveney Integrated Care Board','NHS North Central London Integrated Care Board','NHS North East and North Cumbria Integrated Care Board','NHS North East London Integrated Care Board','NHS North West London Integrated Care Board','NHS Northamptonshire Integrated Care Board','NHS Nottingham and Nottinghamshire Integrated Care Board','NHS Shropshire, Telford and Wrekin Integrated Care Board','NHS Somerset Integrated Care Board','NHS South East London Integrated Care Board','NHS South West London Integrated Care Board','NHS South Yorkshire Integrated Care Board','NHS Staffordshire and Stoke-on-Trent Integrated Care Board','NHS Suffolk and North East Essex Integrated Care Board','NHS Surrey Heartlands Integrated Care Board','NHS Sussex Integrated Care Board','NHS West Yorkshire Integrated Care Board'];
+
+      var selection = event.target.value;
+      console.log(selection+"wowwie");
+      var wrapper = document.createElement("li");
+       wrapper.style.cssText = "list-style-type: none;;font-size:17px;"
+      rowNum=rowNum+1;
+      // let trimSel = selection.slice(-4,-1)
+
+      let trimSel = selection.split("-")
+
+      wrapper.innerHTML = trimSel[1];
+   routeRow.appendChild(wrapper)
+   selectedList.push(selection)
+   console.log(selectedList);
+});
+
+   function showDiv(div1) {
+      console.log(div1)
+      document.getElementById(div1).style.display = 'block';
+
+   }
+
+   function hideDiv(div1) {
+      console.log(div1)
+      document.getElementById(div1).style.display = 'none';
+
+   }
+
+   let stageList = ['Invitation', 'First reminder', 'Second reminder', 'Third reminder'];
+   //  const exp = document.getElementById("exp");
+    var count = 1;
+
+   function addAnotherHandler(id) {
+       count = count + 1;
+       const add1 = document.getElementById(id);
+    console.log(count=count+1)
+       console.log(add1.innerText)
+       add1.style.cssText = "display:none";
+       var wrapper = document.createElement("div");
+       wrapper.id = "wrapperDiv" + count;
+       wrapper.innerHTML = '<div style="" class="nhsuk-form-group"><label class="nhsuk-label" for="stageOptions-' + count + '">Stage ' + count + '</label><select style="" class="nhsuk-select" name="stageOptions-' + count + '"><option class="" disabled selected value="Select">Select from the list</option><option id="" value=""></option></select></div><p class="nhsuk-body-m"><a id="addA' + count + '" class="nhsuk-link" style="" onclick="addAnotherHandler(this.id)" href="#">Add another stage</a></p>';
+       exp.appendChild(wrapper)
+    }
+
+
+  
+
+
+    function valueMatching(selection) {
+       count = count + 1;
+      //  const add1 = document.getElementById(id);
+   //  console.log(count=count+1)
+   //    //  console.log(add1.innerText)
+   //    //  add1.style.cssText = "display:none";
+       var wrapper = document.createElement("div");
+       wrapper.id = "wrapperDiv" + count;
+
+
+
+      switch (selection) {
+         case "ICB ODS Code - ICB":
+         console.log("ICB ODS Code - ICB"+" "+selection)
+         // wrapper.innerHTML = '<div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="my-autocomplete">ICB list</label><div style=";" id="my-autocomplete-container"></div></div>';
+            // exp.appendChild(wrapper)
+         break;
+
+         case "Language Preference Flag - LANGUAGE_PREFERENCE":
+         console.log("Language Preference Flag - LANGUAGE_PREFERENCE")
+         break;
+
+         case "Last Invite Type (I or R) - LAST_INVITE_TYPE":
+         console.log("Last Invite Type (I or R) - LAST_INVITE_TYPE");
+         break;
+
+         case "Last Invite Date - LAST_INVITE_DATE":
+         break;
+
+         case "Commissioning Region - COMISSIONING_REGION":
+         break;
+
+         case "Last Successful Procedure Dose Number - LAST_SUCCESSFUL_DOSE":
+         break;
+         
+         case "Opted Out of Communications - OPTOUT":
+         break;
+
+         case "Days Since Last Procedure (Jab) - DAYS_SINCE_LAST_PROCEDURE":
+         break;
+
+         case "Last Communicaiton Date - LAST_COMMS_DATE":
+         break;
+
+         case "Date of Birth - DATE_OF_BIRTH":
+         break;
+
+         case "Booked Appointment Date - BOOKED_APPOINTMENT_DATE":
+         break;
+            }
+    }
+
+
+
+
+
+
+    function addIntervalHandler(id) {
+       count = count + 1;
+       const add1 = document.getElementById(id);
+    console.log(count=count+1)
+       console.log(add1.innerText)
+       add1.style.cssText = "display:none";
+       var wrapper = document.createElement("div");
+
+       wrapper.id = "wrapperDiv" + count;
+       wrapper.innerHTML = '<div style="display:inline-block" class="filterLabel nhsuk-form-group"><label class="nhsuk-label" for="stageOptions-' + count + '">Stage ' + count + '</label><select style="display:inline-block" class="nhsuk-select" name="stageOptions-' + count + '"><option class="filterLabel" disabled selected value="Select">Select from the list</option><option id="" value=""></option></select></div><p class="nhsuk-body-m"><a id="addA' + count + '" class="nhsuk-link" style="" onclick="addAnotherHandler(this.id)" href="#">Add another stage</a></p>';
+       exp.appendChild(wrapper)
+    }
+
+</script>
+<script>
+   function iLikeToMoveIt(from, to, direction) {
+      var first = document.getElementById(from.id).innerText;
+      var second = document.getElementById(to.id).innerText;
+      console.log(direction)
+      document.getElementById(from.id).innerText = second;
+      // document.getElementById(from.id).style = "transform: translateY(-45px)";
+      document.getElementById(to.id).innerText = first;
+      // document.getElementById(to.id).style = "transform: translateY(45px)";
+   }
+</script>
+{% endblock %}
+selectedAttrib	location
+sel	location
+
+	location
+data['personAttributeSelector']
+data['locationSelectListOptions']
+data['icb']
+data['locationICB']
+data['includeExcludeRadios']
+
+
+
+
+locationICB	NHS Cambridgeshire and Peterborough Integrated Care Board
+value-1
+value-2
+value-1-suffix
+value-2-suffix
+includeExcludeRadios	Exclude ALL matches in the cohort apart from my selection
+suf1	outputSuff1
+suf2	outputSuff2
