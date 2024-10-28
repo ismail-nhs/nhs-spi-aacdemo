@@ -88,9 +88,6 @@
       <div class="nhsuk-u-padding-0" style=";">
 
 
-   {# <li class="liSelected">{{autoCompleteSkeleton("val1"="my-autocomplete","val2"="my-autocomplete-container")}}
-</li> #}
-
 <div style="width:50%">
 
 {{autoCompleteSkeleton("val1"="my-autocomplete","val2"="my-autocomplete-container",label="Location  search")}}
@@ -101,21 +98,7 @@
 
 
  
- {% set region = ['East of England','London','Midlands','North East and Yorkshire','North West','South East','South West'] %}
-
- {# <li class="liSelected">
- <div style="" id ="locationRegion" class="nhsuk-form-group">
-   <label  class="nhsuk-label" for="locationRegion">
-     NHS England Region
-   </label>
-   <select style="" class="nhsuk-select" id="locationRegion" name="locationRegion">
-     <option disabled selected value="Select">NHS England Region list</option>
-
-     {% for entry in region %}
-     <option id="{{entry}}" value="{{entry}}">{{entry}}</option>
-     {% endfor %}
-   </select>
- </div></li> #}
+ 
 
 
 
@@ -123,68 +106,10 @@
 
 
 
-
-
-
-{% set ICBlist = ['NHS Bath and North East Somerset, Swindon and Wiltshire Integrated Care Board','NHS Bedfordshire, Luton and Milton Keynes Integrated Care Board','NHS Birmingham and Solihull Integrated Care Board','NHS Black Country Integrated Care Board','NHS Bristol, North Somerset and South Gloucestershire Integrated Care Board','NHS Buckinghamshire, Oxfordshire and Berkshire West Integrated Care Board','NHS Cambridgeshire and Peterborough Integrated Care Board','NHS Cheshire and Merseyside Integrated Care,Board','NHS Cornwall and the Isles of Scilly Integrated Care Board','NHS Coventry and Warwickshire Integrated Care Board','NHS Derby and Derbyshire Integrated Care Board','NHS Devon Integrated Care Board','NHS Dorset Integrated Care Board','NHS Frimley Integrated Care Board','NHS Gloucestershire Integrated Care Board','NHS Greater Manchester Integrated Care Board','NHS Hampshire and Isle of Wight Integrated Care Board','NHS Herefordshire and Worcestershire Integrated Care Board','NHS Hertfordshire and West Essex Integrated Care Board','NHS Humber and North Yorkshire Integrated Care Board','NHS Kent and Medway Integrated Care Board','NHS Lancashire and South Cumbria Integrated Care Board','NHS Leicester, Leicestershire and Rutland Integrated Care Board','NHS Lincolnshire Integrated Care Board','NHS Mid and South Essex Integrated Care Board','NHS Norfolk and Waveney Integrated Care Board','NHS North Central London Integrated Care Board','NHS North East and North Cumbria Integrated Care Board','NHS North East London Integrated Care Board','NHS North West London Integrated Care Board','NHS Northamptonshire Integrated Care Board','NHS Nottingham and Nottinghamshire Integrated Care Board','NHS Shropshire, Telford and Wrekin Integrated Care Board','NHS Somerset Integrated Care Board','NHS South East London Integrated Care Board','NHS South West London Integrated Care Board','NHS South Yorkshire Integrated Care Board','NHS Staffordshire and Stoke-on-Trent Integrated Care Board','NHS Suffolk and North East Essex Integrated Care Board','NHS Surrey Heartlands Integrated Care Board','NHS Sussex Integrated Care Board','NHS West Yorkshire Integrated Care Board'] %}
-{# <li class="liSelected"><div style="" id ="locationICB" class="nhsuk-form-group">
-   <label  class="filterLabel nhsuk-label" for="locationICB">
-     Integrated Care Board list (42)
-   </label>
-   <select style="" class="nhsuk-select" id="locationICB" name="locationICB">
-     <option disabled selected value="Select">Select Integrated Care Board from the list</option>
-
-     {% for icb in ICBlist %}
-     <option id="{{icbitem}}" value="{{icb}}">{{icb}}</option>
-     {% endfor %}
-   </select>
- </div></li> #}
-
-
-
- <!--<li class="liSelected">
-   <div style="" id ="value-1-suffix" class="nhsuk-form-group">
-     <label class="nhsuk-label" for="value-1-suffix">
-       Value 1
-     </label>
-     <div class="nhsuk-input__wrapper">
-       <input style="" class="nhsuk-input nhsuk-input--width-20" id="value-1-suffix" name="value-1-suffix" type="text">
-       <div id ="suffix1" class="nhsuk-input__suffix" aria-hidden="true">Lorem</div>
-     </div>
-   </div>
- </li>
-
- <li class="liSelected">
-   <div style="" id ="value-2-suffix" class="nhsuk-form-group">
-     <label class="nhsuk-label" for="value-2-suffix">
-       Value 2
-     </label>
-     <div class="nhsuk-input__wrapper">
-       <input class="nhsuk-input nhsuk-input--width-20" id="value-2-suffix" name="value-2-suffix" type="text">
-       <div id ="suffix2" class="nhsuk-input__suffix" aria-hidden="true">ipsum</div>
-     </div>
-   </div>
- </li>
---></ul>
      
    
     </div>
-    <!--<div  style=";;height:40px;border:0px solid black;border-radius:0px 0px 5px 5px;padding:5px 10px 5px 10px;background-color:#FFFBCE;";" class="govuk-radios govuk-radios--small govuk-radios--inline" data-module="govuk-radios">
-
-      <div  class="govuk-radios__item">
-         <input class="radioGaga govuk-radios__input" id="sort" name="example" type="radio" value="relevance">
-         <label style="font-size:21px;font-weight:999" class="govuk-label govuk-radios__label" for="sort">
-            and
-         </label>
-      </div>
---><!--      <div style=";;" class="govuk-radios__item">
-   
-         <input  class="govuk-u-margin-left-2 govuk-radios__input " id="sort-2" name="example" type="radio" value="title">
-         <label class="govuk-label govuk-radios__label" for="sort-2">
-            or
-         </label>
-      </div>-->
-      </div</div>
+         </div</div>
 
                  
             </div>
@@ -195,28 +120,11 @@
         </div>
         </div>
    
-   
-   {% set routeListArray = [] %}
-   
-   <form action="test1?list=routeListArray" method="post">
-   
-   {% if data['input-autocomplete'].length > 0 %}
-   {% set routeListArray = (routeListArray.push(data['input-autocomplete']),routeListArray) %}
-   {% else %}
-   {% endif %}
-   
-         {# <div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="attribSearch">Attribute search</label><div style=";" id="attribSearch-container"></div></div>
-         <div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="otherSearch">Attribute search</label><div style=";" id="other-container"></div></div>
-         <div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="regionSearch">Attribute search</label><div style=";" id="region-container"></div></div> #}
-   
-   
-         {{ routeListArray }}
-         {# wrapper.innerHTML = '<div class="nhsuk-u-padding-bottom-6" style=""><label class="nhsuk-label" style="font-size:17px" for="my-autocomplete">ICB list</label><div style=";" id="my-autocomplete-container"></div></div>'; #}
-   
+      
    
          <div id="exp">
    
-            {# <div class="" id="showOperators" style="">{% set count = "0"|int %}{{selectOperator(count=1)}}</div> #}
+
             
                                     {% set count=count+1|int %}
                                     </div>
@@ -228,11 +136,9 @@
    {% set row1Num = 1|int %}
    {% set row2Num = 2|int %}
    {% set row3Num = 3|int %}
-   {# <div class="nhsuk-u-padding-bottom-6" style="display:none"><label class="nhsuk-label" style="font-size:17px" for="my-autocomplete">ICB list</label><div style=";" id="my-autocomplete-container"></div></div> #}
-   
+
    <span style="" id="routeRow"></span>
 
-  </form>
 </div>
 <script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
 
