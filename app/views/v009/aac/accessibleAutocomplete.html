@@ -209,21 +209,19 @@ console.log(results)
    
    var rowNum = 0;
    acContain.addEventListener("change", () => {
-      var ICBlist = ['NHS Bath and North East Somerset, Swindon and Wiltshire Integrated Care Board','NHS Bedfordshire, Luton and Milton Keynes Integrated Care Board','NHS Birmingham and Solihull Integrated Care Board','NHS Black Country Integrated Care Board','NHS Bristol, North Somerset and South Gloucestershire Integrated Care Board','NHS Buckinghamshire, Oxfordshire and Berkshire West Integrated Care Board','NHS Cambridgeshire and Peterborough Integrated Care Board','NHS Cheshire and Merseyside Integrated Care,Board','NHS Cornwall and the Isles of Scilly Integrated Care Board','NHS Coventry and Warwickshire Integrated Care Board','NHS Derby and Derbyshire Integrated Care Board','NHS Devon Integrated Care Board','NHS Dorset Integrated Care Board','NHS Frimley Integrated Care Board','NHS Gloucestershire Integrated Care Board','NHS Greater Manchester Integrated Care Board','NHS Hampshire and Isle of Wight Integrated Care Board','NHS Herefordshire and Worcestershire Integrated Care Board','NHS Hertfordshire and West Essex Integrated Care Board','NHS Humber and North Yorkshire Integrated Care Board','NHS Kent and Medway Integrated Care Board','NHS Lancashire and South Cumbria Integrated Care Board','NHS Leicester, Leicestershire and Rutland Integrated Care Board','NHS Lincolnshire Integrated Care Board','NHS Mid and South Essex Integrated Care Board','NHS Norfolk and Waveney Integrated Care Board','NHS North Central London Integrated Care Board','NHS North East and North Cumbria Integrated Care Board','NHS North East London Integrated Care Board','NHS North West London Integrated Care Board','NHS Northamptonshire Integrated Care Board','NHS Nottingham and Nottinghamshire Integrated Care Board','NHS Shropshire, Telford and Wrekin Integrated Care Board','NHS Somerset Integrated Care Board','NHS South East London Integrated Care Board','NHS South West London Integrated Care Board','NHS South Yorkshire Integrated Care Board','NHS Staffordshire and Stoke-on-Trent Integrated Care Board','NHS Suffolk and North East Essex Integrated Care Board','NHS Surrey Heartlands Integrated Care Board','NHS Sussex Integrated Care Board','NHS West Yorkshire Integrated Care Board'];
-
-      var selection = event.target.value;
-      console.log(selection+"wowwie");
-      var wrapper = document.createElement("li");
-       wrapper.style.cssText = "list-style-type: none;;font-size:17px;"
-      rowNum=rowNum+1;
-      // let trimSel = selection.slice(-4,-1)
-
-      let trimSel = selection.split("-")
-
-      wrapper.innerHTML = trimSel[1];
-   routeRow.appendChild(wrapper)
-   selectedList.push(selection)
-   console.log(selectedList);
+      //   var selection = event.target.value;
+//      console.log(selection+"wowwie");
+//      var wrapper = document.createElement("li");
+//       wrapper.style.cssText = "list-style-type: none;;font-size:17px;"
+//      rowNum=rowNum+1;
+//      // let trimSel = selection.slice(-4,-1)
+//
+//      let trimSel = selection.split("-")
+//
+//      wrapper.innerHTML = trimSel[1];
+//   routeRow.appendChild(wrapper)
+//   selectedList.push(selection)
+//   console.log(selectedList);
 });
 
 //   function showDiv(div1) {
@@ -241,18 +239,18 @@ console.log(results)
 //   let stageList = ['Invitation', 'First reminder', 'Second reminder', 'Third reminder'];
 //   //  const exp = document.getElementById("exp");
 //    var count = 1;
-
-   function addAnotherHandler(id) {
-       count = count + 1;
-       const add1 = document.getElementById(id);
-    console.log(count=count+1)
-       console.log(add1.innerText)
-       add1.style.cssText = "display:none";
-       var wrapper = document.createElement("div");
-       wrapper.id = "wrapperDiv" + count;
-       wrapper.innerHTML = '<div style="" class="nhsuk-form-group"><label class="nhsuk-label" for="stageOptions-' + count + '">Stage ' + count + '</label><select style="" class="nhsuk-select" name="stageOptions-' + count + '"><option class="" disabled selected value="Select">Select from the list</option><option id="" value=""></option></select></div><p class="nhsuk-body-m"><a id="addA' + count + '" class="nhsuk-link" style="" onclick="addAnotherHandler(this.id)" href="#">Add another stage</a></p>';
-       exp.appendChild(wrapper)
-    }
+//
+//   function addAnotherHandler(id) {
+//       count = count + 1;
+//       const add1 = document.getElementById(id);
+//    console.log(count=count+1)
+//       console.log(add1.innerText)
+//       add1.style.cssText = "display:none";
+//       var wrapper = document.createElement("div");
+//       wrapper.id = "wrapperDiv" + count;
+//       wrapper.innerHTML = '<div style="" class="nhsuk-form-group"><label class="nhsuk-label" for="stageOptions-' + count + '">Stage ' + count + '</label><select style="" class="nhsuk-select" name="stageOptions-' + count + '"><option class="" disabled selected value="Select">Select from the list</option><option id="" value=""></option></select></div><p class="nhsuk-body-m"><a id="addA' + count + '" class="nhsuk-link" style="" onclick="addAnotherHandler(this.id)" href="#">Add another stage</a></p>';
+//       exp.appendChild(wrapper)
+//    }
 
 
   
@@ -329,7 +327,7 @@ console.log(results)
 //    }
 
 </script>
-<script>
+<!--<script>
    function iLikeToMoveIt(from, to, direction) {
       var first = document.getElementById(from.id).innerText;
       var second = document.getElementById(to.id).innerText;
@@ -362,3 +360,4 @@ value-2-suffix
 includeExcludeRadios	Exclude ALL matches in the cohort apart from my selection
 suf1	outputSuff1
 suf2	outputSuff2
+-->
